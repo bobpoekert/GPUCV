@@ -1,0 +1,18 @@
+This package was debianized by Yannick Allusse <yannick.allusse@it-sudParis.eu> on
+Monday,  2 June 2008 12:06:25 +0100.
+
+It was downloaded from https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHome
+
+Upstream Author: Yannick Allusse <yannick.allusse@it-sudParis.eu>
+
+Copyright: 2008 Institut Telecom
+
+License: CeCILL-B V1
+
+
+The Debian packaging is (C) 2008, limux limux1 <limux@dev2.tvc.muenchen.de> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+GpuCVS include some source code from other OpenSource projects:
+
+- ??

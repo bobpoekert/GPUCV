@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="GpuCVCUDA_VS2008"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="GpuCVCUDA_VS2008"
+			DisplayName="GpuCVCUDA_VS2008"
+			CommandLine="nvcc.exe  [verbose] -ccbin &quot;$(VCInstallDir)bin&quot; [Arch1] [Arch2] [Arch3] [Emulation] -c [Defines] -D_WINDOWS -D_NVCC [CPLUSPLUS] -Xcompiler &quot;/EHsc [Warning] /nologo  [Optimization] /Zi [RuntimeChecks] [Runtime]  [TypeInfo]&quot; [Include] -I&quot;$(CUDA_INC_PATH)&quot; -I&quot;$(NVSDKCOMPUTE_ROOT)/C/common/inc&quot; -I&quot;./&quot; -I&quot;../../../dependencies/otherlibs/include/&quot;  -I&quot;../../../dependencies/otherlibs/include/pthread/&quot; -I&quot;../../../dependencies/SugoiTools/include/&quot; -I&quot;../../../src/lib/GPUCV&quot; -I&quot;../../../include/&quot; -I&quot;../../../src/plugin/&quot; -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;"
+			Outputs="$(IntDir)\$(InputName).obj"
+			FileExtensions="*.cu"
+			ExecutionDescription="Compiling..."
+			>
+			<Properties>
+				<StringProperty
+					Name="Include"
+					DisplayName="Additional Include Directories"
+					Description="Specifies one or more directories to add to the include path; use semi-colon delimited list if more than one.   (/I[path])"
+					Switch="-I[value]"
+					Delimited="true"
+					Delimiters=";"
+					Inheritable="true"
+				/>
+				<EnumProperty
+					Name="Optimization"
+					DisplayName="Optimization"
+					PropertyPageName="Optimization"
+					Description="Select option for code optimization; choose Custom to use specific optimization options.  (/Od, /O1, /O2, /Ox)"
+					DefaultValue="2"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/Od"
+							DisplayName="Disabled (/Od)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/O1"
+							DisplayName="Minimize Size (/O1)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/O2"
+							DisplayName="Maximize Speed (/O2)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/Ox"
+							DisplayName="Full Optimization (/Ox)"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="Defines"
+					DisplayName="Preprocessor Definitions"
+					PropertyPageName="Preprocessor"
+					Description="Specifies one or more preprocessor defines.   (/D[macro])"
+					Switch="-D[value]"
+					Delimited="true"
+					Inheritable="true"
+				/>
+				<EnumProperty
+					Name="Warning"
+					DisplayName="Warning Level"
+					Description="Select how strict you want the compiler to be about checking for potentially suspect constructs.   (/W0 - /W4)"
+					DefaultValue="3"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/W0"
+							DisplayName="Off: Turn Off All Warnings (/W0)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/W1"
+							DisplayName="Level 1 (/W1)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/W2"
+							DisplayName="Level 2 (/W2)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/W3"
+							DisplayName="Level 3 (/W3)"
+						/>
+						<EnumValue
+							Value="4"
+							Switch="/W4"
+							DisplayName="Level 4 (/W4)"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="RuntimeChecks"
+					DisplayName="Basic Runtime Checks"
+					PropertyPageName="Code Generation"
+					Description="Perform basic runtime error checks, incompatible with any optimization type other than debug.   (/RTCs, /RTCu, /RTC1)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch=" "
+							DisplayName="Default"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/RTCs"
+							DisplayName="Stack Frames (/RTCs)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/RTCu"
+							DisplayName="Uninitialized Variables (/RTCu)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/RTC1"
+							DisplayName="Both (/RTC1, equiv. to /RTCsu)"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="Runtime"
+					DisplayName="Runtime Library"
+					PropertyPageName="Code Generation"
+					Description="Specify runtime library for linking.   (/MT, /MTd, /MD, /MDd, /ML, /MLd)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/MT"
+							DisplayName="Multi-Threaded (/MT)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/MTd"
+							DisplayName="Multi-Threaded Debug (/MTd)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/MD"
+							DisplayName="Multi-Threaded DLL (/MD)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/MDd"
+							DisplayName="Multi-Threaded Debug DLL (/MDd)"
+						/>
+						<EnumValue
+							Value="4"
+							Switch="/ML"
+							DisplayName="Single-Threaded (/ML)"
+						/>
+						<EnumValue
+							Value="5"
+							Switch="/MLd"
+							DisplayName="Single-Threaded Debug (/MLd)"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="Emulation"
+					DisplayName="Emulation"
+					PropertyPageName="CUDA-Specific"
+					Description="Whether or not to generate emulated code."
+					Switch="-deviceemu"
+				/>
+				<BooleanProperty
+					Name="TypeInfo"
+					DisplayName="Enable Run-Time Type Info"
+					PropertyPageName="Language"
+					Description="Adds code for checking C++ object types at run time (runtime type information). (/GR)"
+					Switch="/GR"
+				/>
+				<StringProperty
+					Name="verbose"
+					DisplayName="Verbose"
+					Category="Debug"
+					Switch="--verbose"
+				/>
+				<EnumProperty
+					Name="Arch1"
+					DisplayName="GPU Architecture (1)"
+					PropertyPageName="GPU"
+					Description="Select option for the GPU architecture to use on the command line (-arch sm_10 through sm_20)"
+					DefaultValue="10"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="0"
+						/>
+						<EnumValue
+							Value="10"
+							Switch="-gencode=arch=compute_10,code=\&quot;sm_10,compute_10\&quot;"
+							DisplayName="sm_10"
+						/>
+						<EnumValue
+							Value="11"
+							Switch="-gencode=arch=compute_11,code=\&quot;sm_11,compute_11\&quot;"
+							DisplayName="sm_11"
+						/>
+						<EnumValue
+							Value="12"
+							Switch="-gencode=arch=compute_12,code=\&quot;sm_12,compute_12\&quot;"
+							DisplayName="sm_12"
+						/>
+						<EnumValue
+							Value="13"
+							Switch="-gencode=arch=compute_13,code=\&quot;sm_13,compute_13\&quot;"
+							DisplayName="sm_13"
+						/>
+						<EnumValue
+							Value="20"
+							Switch="-gencode=arch=compute_20,code=\&quot;sm_20,compute_20\&quot;"
+							DisplayName="sm_20"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="Arch2"
+					DisplayName="GPU Architecture (2)"
+					PropertyPageName="GPU"
+					Description="Select option for the GPU architecture to use on the command line (-arch sm_10 through sm_20)"
+					DefaultValue="20"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="0"
+						/>
+						<EnumValue
+							Value="10"
+							Switch="-gencode=arch=compute_10,code=\&quot;sm_10,compute_10\&quot;"
+							DisplayName="sm_10"
+						/>
+						<EnumValue
+							Value="11"
+							Switch="-gencode=arch=compute_11,code=\&quot;sm_11,compute_11\&quot;"
+							DisplayName="sm_11"
+						/>
+						<EnumValue
+							Value="12"
+							Switch="-gencode=arch=compute_12,code=\&quot;sm_12,compute_12\&quot;"
+							DisplayName="sm_12"
+						/>
+						<EnumValue
+							Value="13"
+							Switch="-gencode=arch=compute_13,code=\&quot;sm_13,compute_13\&quot;"
+							DisplayName="sm_13"
+						/>
+						<EnumValue
+							Value="20"
+							Switch="-gencode=arch=compute_20,code=\&quot;sm_20,compute_20\&quot;"
+							DisplayName="sm_20"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="Arch3"
+					DisplayName="GPU Architecture (3)"
+					PropertyPageName="GPU"
+					Description="Select option for the GPU architecture to use on the command line (-arch sm_10 through sm_20)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="0"
+						/>
+						<EnumValue
+							Value="10"
+							Switch="-gencode=arch=compute_10,code=\&quot;sm_10,compute_10\&quot;"
+							DisplayName="sm_10"
+						/>
+						<EnumValue
+							Value="11"
+							Switch="-gencode=arch=compute_11,code=\&quot;sm_11,compute_11\&quot;"
+							DisplayName="sm_11"
+						/>
+						<EnumValue
+							Value="12"
+							Switch="-gencode=arch=compute_12,code=\&quot;sm_12,compute_12\&quot;"
+							DisplayName="sm_12"
+						/>
+						<EnumValue
+							Value="13"
+							Switch="-gencode=arch=compute_13,code=\&quot;sm_13,compute_13\&quot;"
+							DisplayName="sm_13"
+						/>
+						<EnumValue
+							Value="20"
+							Switch="-gencode=arch=compute_20,code=\&quot;sm_20,compute_20\&quot;"
+							DisplayName="sm_20"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="CPLUSPLUS"
+					DisplayName="Support C++"
+					Switch="-D_CPLUSPLUS"
+					DefaultValue="false"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

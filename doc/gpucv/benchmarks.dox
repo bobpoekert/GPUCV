@@ -1,0 +1,64 @@
+/*! \page BENCH_OP_FILTERS_PAGE Benchmarking operators and filters
+ * \section BENCH_OP_FILTERS_SECT Benchmarking operators and filters
+ * <br>\ref BENCH_ADDING_TRC_FCT_SECT "Adding profiling functionnalities to source code:"
+ * <br>\ref BENCH_WRITING_REPORT_SECT "Writing profiling report to files:"
+ *<br><br>
+ * \subsection BENCH_ADDING_TRC_FCT_SECT Adding profiling functionnalities to source code:
+ * \note benchmarking functionnalities are supply "as is", fill free to improve ToolsTracer class and give us feedbacks.
+ * There are two ways to profile a function:
+ * \par Internal profiling:
+ * <br>Internal profiling can only be used when you have full access to the function source code.
+	<br>You must insert at the beginning of the function the following code:
+	\code 
+#if _CVG_PROFILE
+	   FCT_TRACER * FctTrc = AppliTracer()->AddRecord(FunctionName, FunctionType, Parameters);
+	   FctTrc->StartTrc();
+#endif
+	\endcode 
+	<br>You must also insert the following code at the end of the function before the return call:
+	\code 
+#if _CVG_PROFILE
+	   FctTrc->StopTrc();
+#endif
+ *	\endcode 
+ *   \warning If the function you want to profile has multiple return calls, you may use the external profiling methods or add the "FctTrc->StopTrc();" line before each exit.
+ * <br>
+ * \par External profiling:
+ *<br>External profiling uses a like _BENCH or _BENCH_GL to profile the function.
+ 	\code 
+_BENCH(FunctionName, AppliTracer()->GenerateTextFile(, FunctionCode, Parameters, SizeX, SizeY);//For all functions
+or 
+_BENCH_GL(FunctionName, FunctionCode, Parameters, SizeX, SizeY);//for OpenGL functions.
+	\endcode 
+ * \note External profiling is usefull when you do not have the function source code but must be added to all the call of the function you want to profile. 
+ *<br><br>
+ * \subsection BENCH_WRITING_REPORT_SECT Writing profiling report to files:
+ * Several output format are availables:
+ * \par TXT files:
+To save benchmarks result to TXT files, you must call the AppliTracer()->GenerateTextFile() function before exiting your application.
+<br>This will write benchmarks values in the following format:
+\code 
+FunctionName1
+FunctionTypeA (SizeX, SizeY, Parameters_i) values1 values2 values3 .. .. .. ..
+FunctionTypeB (SizeX, SizeY, Parameters_j) values1 values2 values3 .. .. .. ..
+FunctionName2
+FunctionTypeA (SizeX, SizeY, Parameters_k) values1 values2 values3 .. .. .. ..
+FunctionTypeB (SizeX, SizeY, Parameters_l) values1 values2 values3 .. .. .. ..
+...
+...
+...
+\endcode 
+
+ * \par HTML files:
+To save benchmarks result to HTML files, you must call the AppliTracer()->GenerateHTMLFile() function before exiting your application.
+<br><a href="../benchmarks.html" target=blank>See results on this page</a>.
+ * \par SVG files:
+To save benchmarks result to SVG files, you must call the AppliTracer()->GenerateSvgFile() function before exiting your application.
+\warning _GPUCV_SVG_CREATE_FILES must be set to 1.
+<br><a href="../benchmarks.html" target=blank>See results on this page</a>.
+ * \par PNG files:
+PNG files are automatically generated with SVG files.
+\warning _GPUCV_SVG_CREATE_FILES must be set to 1.
+\warning _GPUCV_SVG_CONVERT_TO_PNG must be set to 1.
+\warning _GPUCV_SVG_BATIK_RASTERIZER_PATH, _GPUCV_SVG_BATIK_RASTERIZER_SIZE and _GPUCV_SVG_EXPORT_PATH must be defined with the correct values.
+*/

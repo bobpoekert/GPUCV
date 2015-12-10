@@ -1,0 +1,124 @@
+/*!
+
+@addtogroup GPUCVCONSOLE_GRP
+@{
+ * \section EXAMPLE_GPUCVCONSOLE_SECT_INTRO Intro
+ \author Yannick Allusse
+ \version GpuCV v1.0.0 rev 583
+ 
+
+ GPUCVConsole application is designed to test and benchmarks any GpuCV operators. Using a console prompt, you can customize some parameters to test operators 
+ in specific conditions. Have a look at the parameters list \ref GPUCVCONSOLE_GRP_PARAMETERS and the internal commands \ref GPUCVCONSOLE_GRP_COMMANDS.
+ 
+ * \section EXAMPLE_GPUCVCONSOLE_SECT_TEST_ALL Testing and benchmarking all operators
+ The GpuCVConsole application supplies commands to test and benchmarks all operators on your system. Simply run the application with the following commands:
+ 
+ \code
+ >GpuCVConsole.x86_*.* "runbench 10;savebench MyBenchReport.xml;benchreport MyBenchReport;q;"
+ \endcode
+ 
+ This will:
+ <ul>
+	<li>Benchmark every operators and all their available implementaitons <b>10 times</b></li>
+	<li>Save the XML benchmarking restuls in <b>./gpucv/data/Benchmarks/MyBenchReport.xml</b></li>
+	<li>Generate a HTML graphic report in <b>./gpucv/data/Benchmarks/MyBenchReport/index.html</b></li>
+ </ul>
+ 
+ 
+ 
+ 
+ * \section EXAMPLE_GPUCVCONSOLE_SECT_TEST Testing an operators
+ Have a look a the list of implemented \ref GPUCVCONSOLE_GRP_OPERATORS list that are available for testing threw the console interface. 
+ Then call them using the according format. 
+ <br><br>Here is an example showing the cvAdd function with mask and scalar values:
+ \code
+ //to type in the command prompt(without the comment)
+ //test cvAdd without mask
+ disable mask // mask are disabled by default
+ add
+ //test cvAdd with mask
+ enable mask
+ add
+ disable mask
+ //test cvAddS
+ enable scalar
+ => some scalar values need to be provided 
+ add
+ //test cvAddS with mask
+ enable mask
+ add 
+ disable scalar
+ disable mask
+ \endcode
+ \note A flag keep its state until the next enable/disable command is called.
+ 
+ * \section EXAMPLE_GPUCVCONSOLE_SECT_CMD_FILE Running commands from a file
+ One of the most useful command is 'cmdfile FILE_TO_OPEN' that allows you to load a set of command from a text file.
+ \code
+ cmdfile my_own_test_file.txt
+ \endcode
+ 
+ * It allows you to set GpuCV environnement to your desired testing conditions, here is an example that test cvAdd using openCV/GpuCV-GLSL and GpuCV-Cuda with image format IPL_DEPTH_32F and 3 channels:
+ \code
+ enable opencv;
+ enable glsl;
+ enable cuda;
+ enable showimage;
+ imgformat src1 32f 3;
+ imgformat src2 32f 3;
+ add;
+ wait 4;
+ q; 
+ \endcode
+ \note Command file must contains instructions separated by ';'.
+ \note Command file does not support commented line yet.
+ \todo Command file does not use any scripting language, any contribution to add LUA support are welcome.
+ 
+ * \section EXAMPLE_GPUCVCONSOLE_SECT_BENCH Running benchmarks for specific cases 
+ You can test and benchmark specific operators manually by creating a custom benchmark command file. This will allow you to set options like:
+ <ul>
+ <li>Images format</li>
+ <li>Images resolution</li>
+ <li>Enable/disable mask or scalar flags</li>
+ <li>Enable/disable some implementations(Opencv/CUDA/GLSL...)</li>
+ <li>Run the operators you are interested in</li>
+ <li>...</li>
+ </ul>
+ \code
+ enable opencv;
+ enable glsl;
+ enable cuda;
+ benchmode;
+ imgformat src1 8u 3;
+ imgformat src2 8u 3;
+ imgformat mask 8u 1;
+ resizeimg 2048 2048;
+ enable mask;
+ add;
+ sub;
+ mul 0.1;
+ disable mask;
+ add;
+ sub;
+ mul 0.1;
+ resizeimg 1024 1024;
+ enable mask;
+ add;
+ sub;
+ mul 0.1;
+ disable mask;
+ add;
+ sub;
+ mul 0.1;
+ savebench;
+ q;
+ \endcode
+ 
+@}
+*/
+
+
+/** @addtogroup FAQ_RUNTIME_GRP
+@{
+	\par Could not find some libraries at runtime?
+@}*/

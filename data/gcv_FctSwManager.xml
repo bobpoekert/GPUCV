@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no" ?>
+<fctsw_mngr minBenchNbr="5">
+    <fctsw id="cvCloneImage" ForcedImplID="GLSL" />
+    <fctsw id="cvCloneMat" ForcedImplID="GLSL" />
+    <fctsw id="cvCreateData" ForcedImplID="GLSL" />
+    <fctsw id="cvCreateImage" ForcedImplID="GLSL" />
+    <fctsw id="cvCreateMat" ForcedImplID="GLSL" />
+    <fctsw id="cvGetRawData" ForcedImplID="GLSL" />
+    <fctsw id="cvGetSize" ForcedImplID="opencv" />
+    <fctsw id="cvReleaseData" ForcedImplID="GLSL" />
+    <fctsw id="cvReleaseImage" ForcedImplID="GLSL" />
+    <fctsw id="cvReleaseMat" ForcedImplID="GLSL" />
+    <fctsw id="cvSetIdentity" ForcedImplID="GLSL" />
+    <fctsw id="cvShowImage" ForcedImplID="GLSL" />
+    <fctsw id="cvResize" ForcedImplID="opencv" />
+    <fctsw id="cvCopy" ForcedImplID="opencv" />
+  <fctsw_mngr>
+        <fctsw id="cvCloneImage" ForcedImplID="GLSL" />
+        <fctsw id="cvCloneMat" ForcedImplID="GLSL" />
+        <fctsw id="cvCopy" ForcedImplID="GLSL" />
+        <fctsw id="cvCreateData" ForcedImplID="GLSL" />
+        <fctsw id="cvCreateImage" ForcedImplID="GLSL" />
+        <fctsw id="cvCreateMat" ForcedImplID="GLSL" />
+        <fctsw id="cvCvtColor" ForcedImplID="0" />
+        <fctsw id="cvGetRawData" ForcedImplID="GLSL" />
+        <fctsw id="cvGetSize" ForcedImplID="1" />
+        <fctsw id="cvReleaseData" ForcedImplID="GLSL" />
+        <fctsw id="cvReleaseImage" ForcedImplID="GLSL" />
+        <fctsw id="cvReleaseMat" ForcedImplID="GLSL" />
+        <fctsw id="cvSet" ForcedImplID="GLSL" />
+        <fctsw id="cvSetData" ForcedImplID="GLSL" />
+        <fctsw id="cvSetIdentity" ForcedImplID="GLSL" />
+        <fctsw id="cvSetZero" ForcedImplID="GLSL" />
+        <fctsw id="cvShowImage" ForcedImplID="GLSL" />
+    </fctsw_mngr>
+</fctsw_mngr>

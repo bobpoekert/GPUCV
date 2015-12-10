@@ -1,0 +1,152 @@
+/*! 
+\page TUTO_CREATE_OP_BASE Creating a GpuCV operator - base concept -
+ * \section TUTO_CREATE_OP_BASE__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ NONE.
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 310
+ \note Turorial tag: <b>TUTO_CREATE_OP_BASE_TAG</b>
+ 
+\par
+In this tutorial, we will describe how to create and add any operator into GpuCV library by studying the 'addition' operator. We will explain the creation of the filter launcher and its integration into the library.
+<br><br>Follow the key tag <b>TUTO_CREATE_OP_BASE_TAG*</b> in full project source code to have the correspondance of each steps: 
+ <ol>
+	 <li>\ref TUTO_CREATE_OP_BASE__STP1__FIND_DOC</li>
+	 <li>\ref TUTO_CREATE_OP_BASE__STP2__LAUNCHER</li>
+	 <li>\ref TUTO_CREATE_OP_BASE__STP3__CHOOSE_IMPLEMENTATION</li>	 
+	 <li>\ref TUTO_CREATE_OP_BASE__STP4__WRITE_DOC</li>
+	 <li>\ref CREATING_OP_FILTERS__STP5__TEST_OPERATOR</li>
+</ol>
+\note This tutorial gives you the main steps for operator integration into GpuCV, for technical implementation see related tutorials.
+
+\par Files to edit
+First, consider all the files that you might open/create and edit:
+<ul>
+	<li>src/GPUCV/cxcoreg.[cpp/h] for a <b>cxcore</b> operator</li>
+	<li>src/GPUCV/cvg.[cpp/h] for a <b>cv</b> operator</li>
+	<li>src/GPUCV/cvaux.[cpp/h] for a <b>cvaux</b> operator</li>
+	<li>src/GPUCV/highgui.[cpp/h] for a <b>highui</b> operator</li>
+	<li>src/GPUCV/custom.[cpp/h] for a <b>user custom</b> operator</li>
+</ul>	
+ 
+  
+ * \section TUTO_CREATE_OP_BASE__STP1__FIND_DOC Finding documentation about the specific operators
+ * <i>Tag:</i> <b>No tag</b><br>
+ * \par
+The new operator you plan to develop might be existing into OpenCV or some other libraries. So te first step is to find the corresponding documentation to macth the function declaration and parameters.
+ <br> <ul><li><a href="http://picoforge.int-evry.fr/projects/svn/gpucv/opencv_doc/index.htm" target=blank>OpenCV documentation</a></i></ul>
+ <br>See example of cvAdd:
+ \code
+ Add
+
+Computes per-element sum of two arrays
+
+void cvAdd( const CvArr* src1, const CvArr* src2, CvArr* dst, const CvArr* mask=NULL );
+
+src1
+    The first source array. 
+src2
+    The second source array. 
+dst
+    The destination array. 
+mask
+    Operation mask, 8-bit single channel array; specifies elements of destination array to be changed. 
+
+The function cvAdd adds one array to another one:
+
+dst(I)=src1(I)+src2(I) if mask(I)!=0
+
+All the arrays must have the same type, except the mask, and the same size (or ROI size)
+ \endcode
+ 
+\note We strongly recommend you to make benchmarks of the CPU version of the operator before starting implementing, not all operators can be accelerated easily on GPU. 
+
+	
+* \section TUTO_CREATE_OP_BASE__STP2__LAUNCHER Writing the operator launcher
+\par Goal of the launcher
+A 'launcher' function is used to execute an operator on GPU. It is subdivided in several steps:
+<ol>
+	 <li>Exception handling</li>
+	 <li>Switching mechanism with native operator</li>
+	 <li>Hardware compatibility control</li>
+	 <li>Operator profiling and debugging</li>
+	 <li>Data pre-processing: controling options and integrity of data, loading them on GPU if needed</li>
+	 <li>Call GPU operator</li>
+	 <li>Data post-processing: controling options and integrity of data, read them back to CPU if needed</li>
+ </ol>
+
+\par Launcher definition
+* <i>Tag:</i> <b>TUTO_CREATE_OP_BASE_TAG__STP2__LAUNCHER</b><br>
+The function definition must be identical to OpenCV definition except the <b>const</b> qualifier which is not compatible with GpuCV implementation. This is due to some internal mechanisms that might change input CvArr data. See \ref FEATURES_CONST_ISSUE
+\code
+//OpenCV native operator declaration
+CVAPI(void)  		cvAdd(const CvArr* src1, const CvArr* src2, CvArr* dst, const CvArr* mask CV_DEFAULT(NULL));
+//GpuCV correspondance declaration
+_GPUCV_EXPORT void 	cvgAdd(CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask CV_DEFAULT(NULL));
+\endcode
+
+\par Launcher MACROS
+Some MACROS are available to hide some mechanisms complexity and help developers focus on creating operators.
+Using GPUCV_START_OP/GPUCV_STOP_OP, your operator will perform some steps automatically:
+ <ul>
+	 <li>Exception handling</li>
+	 <li>Switching mechanism with native operator</li>
+	 <li>Hardware compatibility control</li>
+	 <li>Operator profiling and debugging</li>
+ </ul>
+ <br>
+You have in charge the data transfer to the desired location and the call to your GPU operator.
+
+\par Launcher declaration
+* <i>Tag:</i> <b>TUTO_CREATE_OP_BASE_TAG__STP2__LAUNCHER</b><br>
+Here is an example of the 'addition' launcher definition using MACROS:
+\code
+void cvgAdd( CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask/*=NULL*/)
+{
+	GPUCV_START_OP(cvAdd(src1, src2, dst, mask),	//If native operator is choosed, this function is called
+		"cvgAdd", 				//name of the launcher, it is used for profiling and debugging
+		dst,					//destination image, used for profiling
+		GenericGPU::HRD_PRF_2);	//Hardware profile to execute the GPU operator
+	
+			...//this part of code depend on the implementation choosed
+	
+	GPUCV_STOP_OP(
+		cvAdd(src1, src2, dst, mask),	//in case of error this function is called
+		src1, src2, mask, dst 		//in case of error, we get this images back to CPU, so the opencv operator can be called without memory error
+		);
+}
+\endcode
+\note All operators in development should be writen into the cvgOperators.h and .cpp or in your own files. The cvg.h and cxcoreg.h files are reserved for official GpuCV operators.
+
+* \section TUTO_CREATE_OP_BASE__STP3__CHOOSE_IMPLEMENTATION Choosing best implementation
+* <i>Tag:</i> <b>No tag</b><br>
+	GpuCV offers you several possibilities to implement your operator:
+<ul>
+	 <li>Pure OpenGL</li>
+	 <li>OpenGL + GLSL shaders</li>
+	 <li>NVIDIA CUDA kernels</li>
+</ul>
+	Depending on your skills, the complexity of the operator and the targeted hardware you may choose one or all implementations.
+	See related totorial for more details.
+
+
+* \section TUTO_CREATE_OP_BASE__STP4__WRITE_DOC  Documenting the new operator
+* <i>Tag:</i> <b>TUTO_CREATE_OP_BASE_TAG__STP4__WRITE_DOC</b><br>
+GPUCV library uses DOXYGEN comment format. Follow this example for your operators.
+\code
+ \fn void cvgAdd( CvArr * src1,  CvArr * src1, CvArr * dst,  CvArr * mask=NULL)
+*	\brief GPUCV correspondence of <a href="http://picoforge.int-evry.fr/projects/svn/gpucv/opencv_doc/ref/opencvref_cxcore.htm#decl_cvAdd" target=new>cvAdd</a> function.
+* 	\param src1 -> source image
+*	\param src2 -> additionnal image
+*	\param dst -> destination image
+*	\param mask -> mask image (optionnal)
+*	\note If you have any comment about your Gpu implementation, references to papers, etc...
+*	\warning If some cases, depending one the input arguments, are not done on GPU, say it here.
+*	\author YourName(No email)
+*	\version Version of GpuCV that was used to design this operator.
+\endcode
+
+* \section CREATING_OP_FILTERS__STP5__TEST_OPERATOR  Testing and benchmarking the new operator
+Go to tutorial \ref TUTO_TEST_OP "Testing and benchmarking a GpuCV operator" to create a testing function.
+*/

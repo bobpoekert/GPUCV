@@ -1,0 +1,79 @@
+/*! \page TUTO_ADD_LIB Adding a new project to GpuCV solution
+ * \section TUTO_ADD_LIB__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>none</li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 366
+ \note Turorial tag: none
+ 
+ *
+<br>In this tutorial, we will describe how to add a new library or example into GpuCV solution.
+
+\par Files to edit
+First, open/create the corresponding file:
+<ul>
+	<li>./Premake.LUA to specify the new proect properties</li>
+	<li>./inlcude/ folder</li>
+	<li>./src/lib/ or ./src/example/ folder</li>
+</ul>
+\note $PROJECT_NAME will be used in this tutorial to identify your project name, please respect the case.
+
+* \section TUTO_ADD_LIB__STP1__ADDING_SRC  Adding source files
+
+\par Creating project folders
+Before adding sources files to the solutions, you have to create corresponding folders:
+<ul>
+	<li>For a library:
+		<ul>
+			<li><b>./include/$PROJECT_NAME </b></li>
+			<li><b>./src/lib/$PROJECT_NAME </b></li>
+		</ul>
+	</li>
+	<li>For an application:
+		<ul>
+			<li>no include folder!</li>
+			<li><b>./src/example/$PROJECT_NAME </b></li>
+		</ul>
+	</li>
+	<li>[Optional] Doxygen documentation files:
+		<ul>
+			<li><b>./doc/$PROJECT_NAME </b></li>
+		</ul>
+	</li>
+</ul>
+\par Creating project folders
+Copy you files accordingly. File type that will be automatocally added are:
+<br><b>cpp/c/cu/h/hpp/dox</b>
+
+* \section TUTO_ADD_LIB__STP2__ADDING_PROJECT  Adding project into LUA script
+Now that all the files have been placed into the correct folders
+ we have to update <b>Premake.LUA</b> script to add corresponding project.
+<ol>
+	<li>Open <b>Premake.LUA</b> and jump to end of the file</li>
+	<li>Use function <b>CreateGPUCVProject()</b> to add a new project with parameters:
+		<ul>
+			<li>Project path: default value is <b>project.path</b></li>
+			<li>Project name: $PROJECT_NAME</li>
+			<li>Project type: ["exe"|"lib"|"dll"] for application, static library or dynamic library.</li>
+			<li>Project category: ["lib"|"example"] for library or application.</li>
+			<li>Project additionnal pre-processor macro definitions: "_$PROJECT_NAME".</li>
+		</ul>
+		\code
+		CreateGPUCVProject(project.path, "GPUCVSimpleApp", "exe" , "example", "")
+		\endcode
+	</li>
+	<li>Add external libraries for linking in Debug and Release modes:
+		\code
+	table.insert( package.config["Debug"].links, {gpucv_lib_listd, opencv_lib_listd, sugoi_lib_listd})
+	table.insert( package.config["Release"].links, {gpucv_lib_list, opencv_lib_list, sugoi_lib_list})	
+		\endcode	
+	</li>
+	<li>Run <b>createSolutions.bat/.sh</b> to create project files.</li>
+</ol>
+
+* \section TUTO_ADD_LIB__STP3__SPEC_CASES Specific cases
+\todo CUDA + MAKEFILE[MORE TO WRITE HERE]
+*/

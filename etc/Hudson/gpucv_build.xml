@@ -1,0 +1,123 @@
+<project name="GpuCV">
+ <property environment="env"/>
+ <property name="verbose" value="--verbose"/>
+ 	<!-- WINDOWS -->
+	<condition property="isWindows">
+		<os family="windows"/>
+	</condition>
+	<condition property="isWindows32">
+		<os family="Windows" arch="x32"/>
+	</condition>
+	<condition property="isWindows64">
+		<os family="Windows" arch="x64"/>
+	</condition>
+	<!-- +WINDOWS+ -->
+
+	<!-- LINUX -->
+	<condition property="isLinux">
+		<os family="unix"/>
+	</condition>
+	<!-- +LINUX+ -->
+	
+	<!-- GPUCV PATH -->
+	<condition property="project_path" value="${env.WORKSPACE}\gpucv">
+		<os family="windows"/>
+	</condition>
+	<condition property="project_path" value="${env.WORKSPACE}/gpucv">
+		<os family="unix"/>
+	</condition>
+	<!-- -->
+	
+	<!-- premake -->
+	<condition property="premake" value="${project_path}\premake4.exe">
+		<os family="windows"/>
+	</condition>
+	<condition property="premake" value="${project_path}/premake4.linux">
+		<os family="unix"/>
+	</condition>
+	<!-- -->
+
+
+	
+	<!-- COMPILER -->
+	<condition property="compiler" value="vs2008">
+		<os family="windows"/>
+	</condition>
+	<condition property="compiler" value="gmake">
+		<os family="unix"/>
+	</condition>
+	<!-- -->
+
+	<!-- temp object dir -->
+	<!-- -->
+	
+	<target name="clean">
+        <exec executable="${premake}" dir="${project_path}">
+			<arg value="${verbose}"/>
+			<arg value="clean"/>
+		</exec>
+    </target>
+	
+	<target name="genproject">
+        <echo message="Compiler: ${compiler}"/>
+		<exec executable="${premake}" dir="${project_path}">
+			<arg value="${verbose}"/>
+			<arg value="${env.OBJ_TMP_DIR}"/>
+			<arg value="${compiler}"/>
+		</exec>
+	</target>
+
+    <target name="compile">
+		<echo message="Compiling....working path:${env.WORKSPACE}"/>
+		<echo message="OS: ${os.name}"/>
+        <exec executable="${premake}" dir="${project_path}">
+			<arg value="--platform=${AXE_ARCHI}"/>
+			<arg value="${verbose}"/>
+			<arg value="compile_${compiler}"/>
+		</exec>
+	</target>
+	
+	
+	<target name="makedoc">
+		<echo message="Making doxygen documentation"/>
+        <exec executable="${premake}" dir="${project_path}">
+			<arg value="${verbose}"/>
+			<arg value="makedoc"/>
+		</exec>
+	</target>
+	
+	<target name="zip-bin">
+		<echo message="Zipping project"/>
+		<echo message="..delete previous zip files:${env.WORKSPACE}/gpucv-bin*.zip"/>
+		<delete dir="${env.WORKSPACE}" includes="gpucv-bin*.zip"/>
+		<exec executable="${premake}" dir="${project_path}">
+			<arg value="--zip-name=${env.WORKSPACE}/gpucv-bin.${env.OS_FAMILY}-${AXE_ARCHI}"/>
+			<arg value="--zip-version=.rev-${env.SVN_REVISION}"/>
+			<arg value="--zip-source=../gpucv"/>
+			<arg value="${verbose}"/>
+			<arg value="zip"/>
+		</exec>
+	</target>
+
+	<target name="zip-src">
+		<echo message="Zipping project"/>
+		<echo message="..delete previous zip files:${env.WORKSPACE}/gpucv-src*.zip"/>
+		<delete dir="${env.WORKSPACE}" includes="gpucv-src*.zip"/>
+		<exec executable="${premake}" dir="${project_path}">
+			<arg value="--zip-name=${env.WORKSPACE}/gpucv-src"/>
+			<arg value="--zip-version=.rev-${env.SVN_REVISION}"/>
+			<arg value="--zip-source=../gpucv"/>
+			<arg value="${verbose}"/>
+			<arg value="zip"/>
+		</exec>
+	</target>
+	
+	<target name="upload_zip">
+		<echo message="Move zip file ${env.WORKSPACE}/*.zip to ${env.ARCHIVES_DIR}"/>
+		<copy todir="${env.ARCHIVES_DIR}/gpucv">
+			 <fileset dir="${env.WORKSPACE}">
+			  <include name="*.zip"/>
+			 </fileset>
+		</copy>
+	</target>
+</project>

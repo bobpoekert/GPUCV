@@ -1,0 +1,111 @@
+/*! \page TUTO_INTEGRATION_PRJ Using GpuCV into your project
+ * \section TUTO_INTEGRATION_PRJ__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>none</li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 487
+ \note Turorial tag: <b>TUTO_INTEGRATION_PRJ_TAG</b>
+ 
+ *
+<br>In this tutorial, we will describe how to use GpuCV accelerated operators into your existing OpenCV application. You will be able to choose between the "easy-way" and GpuCV will use the auto-switch mechanism to find how to accelerate your application with minor code changes. Or you can choose to have full control of GpuCV calls and acceleration.
+<br>
+<br>We will use the <b>morphology</b> sample supplied with OpenCV. 
+The major differences are in the way you call 'OpenCV like' accelerated operators, see \ref TUTO_INTEGRATION_PRJ__STP3__CODE_CHANGE.
+
+\note All modified lines will be noticed by a !!GCV!! flag.
+
+<ol>
+	 <li>\ref TUTO_INTEGRATION_PRJ__STP1__INCLUDE</li>
+	 <li>\ref TUTO_INTEGRATION_PRJ__STP2__LIBS</li>
+	 <li>\ref TUTO_INTEGRATION_PRJ__STP3__CODE_CHANGE</li>
+	 <li>\ref TUTO_INTEGRATION_PRJ__STP4__EXTRA_FILES</li>
+</ol>
+
+
+
+
+\section TUTO_INTEGRATION_PRJ__STP1__INCLUDE Include files
+The first step to use GpuCV is to find out witch include files you need, depending on which level of the GPU implementation you want to use.
+GpuCV use some naming rules to identify the header files roles, based on OpenCV header files name ($NAME$.h)
+<ul>
+    <li>$NAME$.h: Original OpenCV library header.</li>
+    <li>$NAME$<b>g</b>.h: GpuCV-GLSL accelerated library header. Contains some cv<b>g</b>*() functions corresponding to OpenCV cv*() functions.</li>
+    <li>$NAME$<b>gcu</b>.h: GpuCV-CUDA accelerated library header. Contains some cv<b>gCuda</b>*() functions corresponding to OpenCV cv*() functions.</li>
+    <li>$NAME$<b>_switch</b>.h: GpuCV switch function library header. Contains all cv<b>gsw</b>*() functions corresponding to OpenCV cv*() functions.</li>
+    <li>$NAME$<b>_switch_wrapper</b>.h: GpuCV switch function wrapper library header. Contains all cvgsw*() wrapping definitions to map with all OpenCV cv*() functions.</li>
+</ul>
+
+<br>Here is an example of all the function declarations related to the OpenCV function cvAdd():
+\code
+//cxcore.h
+void cvAdd(const CvArr* src1, const CvArr* src2, CvArr* dst, const CvArr* mask CV_DEFAULT(NULL) );
+
+//cxcoreg.h
+void cvgAdd(CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask CV_DEFAULT(NULL) );
+
+//cxcoregcu.h
+void cvgCudaAdd(CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask CV_DEFAULT(NULL) );
+
+//cxcore_switch.h
+void cvgswAdd(CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask CV_DEFAULT(NULL) );
+
+//cxcore_switch_wrapper.h
+#define cvAdd	 cvgswAdd
+\endcode
+
+\par Using GpuCV auto-switch mechanism
+Include all $NAME$<b>_switch_wrapper</b>.h files corresponding to your current OpenCV files.
+<br>NOTE: By using the switch mechanism you do not need to include GpuCV-GLSL or GpuCV-Cuda headers.
+
+\par Using GpuCV manualy
+You have the choice to use the GLSL, CUDA or both versions into your applications. Use the corresponding suffix <b>g</b> or <b>gcu</b> to include the corresponding libraries.
+
+
+
+
+\section TUTO_INTEGRATION_PRJ__STP2__LIBS Library files
+GpuCV uses the naming convention described in previous section for its libraries files using the <b>g</b>/<b>gcu</b>/<b>_switch</b> suffixes.
+
+Here are some list of files that you might have to link with:
+<ul>
+	<li>Required libs:
+		<ul>
+			<li>cv, cxcore, cvaux, highgui for main OpenCV libraries.</li>
+			<li>opengl32, glu32, glut32, glew for all OpenGL libraries.</li>
+			<li>SugoiTools, SugoiTracer</li>
+			<li>GPUCVHardware, GPUCVTexture, GPUCVCore, GPUCVGpuCV for GpuCV framework</li>
+		</ul>
+	</li>
+	<li>Optional libs:
+		<ul>
+			<li>cxcoreg, cvg, highguig for GpuCV-GLSL libraries.</li>
+			<li>cxcoregcu, cvgcu for GpuCV-CUDA libraries.</li>
+			<li>cxcore_switch, cv_switch, highgui_switch for GpuCV-Switch libraries.</li>
+		</ul>
+	</li>
+</ul>
+\note By using the switch mechanism you do not need to link with GpuCV-GLSL or GpuCV-Cuda plugins.
+\note Even if you do not link with all the libraries, they must remain reachable in your $PATH.
+
+\section TUTO_INTEGRATION_PRJ__STP3__CODE_CHANGE Code modifications
+\subsection TUTO_INTEGRATION_PRJ__STP3__CODE_CHANGE__INIT Initialization
+In order to use GpuCV function, you must initialize the libraries by calling cvgInit() at the beginning of your application. Two parameters can be used to specify options (see cvgInit() for details):
+
+    * InitGLContext: If set to true, GpuCV will initialize an OpenGL context and GLUT, default is TRUE.
+    * isMultiThread: If set to true, GpuCV will run in a compatibility mode for multi-threaded application, default is FALSE. 
+	
+\subsection TUTO_INTEGRATION_PRJ__STP3__CODE_CHANGE__CALL OpenCV function calls
+	Now you are ready to make calls to cvg operators, the calling convention of GpuCV operators is cvgOperator. Consult the list of available operators to find OpenCV operators already ported to GPU or go to How to call GpuCVOperators for more details.
+
+\section TUTO_INTEGRATION_PRJ__STP4__EXTRA_FILES Extra files
+GLSL filter files
+GpuCV operators are mainly base on GLSL shader programs that are executed on GPU. Theses programs are automatically compiled at runtime by GpuCV and must be reachable by your application to work correctly:
+<ul>
+	<li>Have a local copy of folders FShaders and VShaders from ./GPUCV/bin/ into your current directory at runtime.</li>
+OR
+	<li>Set the shader program path before initializing GpuCV libraries(cvgInit()) by calling the function cvgSetShaderPath() from misc.h. The given path must be the root directory containing FShaders and VShaders folders, ex: "c:\program_files\gpucv\bin\".</li>
+</ul>
+*/

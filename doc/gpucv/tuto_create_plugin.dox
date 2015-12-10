@@ -1,0 +1,269 @@
+/*! \page TUTO_CREATE_PLUGIN Creating a GpuCV plugin containing operators
+ * \section TUTO_CREATE_PLUGIN__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>\ref TUTO_ADD_LIB</li>
+	<li>\ref TUTO_USE_SWITCH</li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 485
+ \note Turorial tag: <b>TUTO_CREATE_PLUGIN_TAG</b>
+ \sa See objects: gcv::ImplementationDescriptor, gcv::LibraryDescriptor
+ 
+ *
+<br>In this tutorial, we will describe how to create a plugin containing a set of Gpu accelerated operators. GpuCV plugins are used by the switch mechanism to collect different implementations for each operators.
+<br><br>Follow the key tag <b>TUTO_CREATE_PLUGIN_TAG*</b> in full project source code to have the correspondance of each steps: 
+ <ol>
+	 <li>\ref TUTO_CREATE_PLUGIN__STP1__CREATE_PROJECT</li>
+	 <li>\ref TUTO_CREATE_PLUGIN__STP2__ADD_OPERATORS</li>
+	 <li>\ref TUTO_CREATE_PLUGIN__STP3__PLUGIN_DESCRIPTION</li>
+	 <li>\ref TUTO_CREATE_PLUGIN__STP4__PLUGIN_TEST_BENCH</li>
+	 <li>\ref TUTO_CREATE_PLUGIN__STP5__USE</li>
+	</li>
+</ol>
+
+\par Files to edit
+First, open/create the corresponding file:
+<ul>
+	<li>premake.lua</li>
+	<li>bin/gcv_dlls.xml</li>
+</ul>
+
+* \section TUTO_CREATE_PLUGIN__STP1__CREATE_PROJECT  Create the new plugin project
+* <i>Tag:</i> <b>TUTO_CREATE_PLUGIN_TAG__STP1__CREATE_PROJECT</b><br>
+The first step is to create the project itself, it can be done manually or you can use the Premake.lua script supply with GpuCV. 
+We will define here the project:
+<ul>
+<li>Name: $(PRJ_NAME)$</li>
+<li>Type: "dll"</li>
+<li>Path in GpuCV tree: "lib"</li>
+<li>C preprocessor macros: "_GPUCV_$(PRJ_NAME)$_DLL", ex: "_GPUCV_COREG_DLL"</li>
+<li>Dependencies: "$LIB_1, $LIB2, ...". The following libs must always be included: "GPUCVHardwared", "GPUCVTextured", "GPUCVCored", "GPUCVd", sugoi_lib_listd, opencv_lib_listd.</li>
+<li>Additionnal files to include such as shader files.</li>
+</ul>
+<br>
+\par Using Premake.lua
+<br>
+<br>Here is an example of project creation using the premake script, project name is "cxcoreg":
+\code
+CreateGPUCVProject(project.path, "cxcoreg",	"dll", "lib", "_GPUCV_CXCOREG_DLL")
+	table.insert( package.config["Debug"].links, {"GPUCVHardwared", "GPUCVTextured", "GPUCVCored", "GPUCVd",sugoi_lib_listd, opencv_lib_listd})
+	table.insert( package.config["Release"].links, {"GPUCVHardware", "GPUCVTexture", "GPUCVCore", "GPUCV",sugoi_lib_list, opencv_lib_list})
+	table.insert(package.files,
+		matchfiles(
+			default_rootpath.."bin/FShaders/*.frag",
+			default_rootpath.."bin/VShaders/*.vert",
+			default_rootpath.."bin/GShaders/*.geo"
+		))
+\endcode
+\sa TUTO_ADD_LIB.
+
+\par Not using Premake.lua
+Well.. use your favorite tools...and respect the previous rules.
+
+\subsection TUTO_CREATE_PLUGIN__STP1A__DFT_FILES Add default files
+A few files must be present into you new project such as:
+<ul>
+<li>include/$(PRJ_NAME)$/$(PRJ_NAME)$.h: contains the declarations of all you new operators.</li>
+<li>include/$(PRJ_NAME)$/config.h: contains the DLL export/import macro and definitions.</li>
+<li>src/lib/$(PRJ_NAME)$/$(PRJ_NAME)$.cpp: contains the definitions of all your operators. Note: there is no restriction on splitting it up.</li>
+<li>src/lib/$(PRJ_NAME)$/StdAfx.h: precompile header definitions.</li>
+</ul>
+
+\par include/$(PRJ_NAME)$/config.h
+=> Replace all instances of "GPUCV_CXCOREG" by your new project name "_GPUCV_$(PRJ_NAME)$".
+\code
+	//..the plugin license.. ex: GpuCV CeCill-B license.
+	//CVG_LicenseBegin==============================================================
+	//
+	//	Copyright@ Institut TELECOM 2005
+	//		http://www.institut-telecom.fr/en_accueil.html
+	//	
+	//	This software is a GPU accelerated library for computer-vision. It 
+	//	supports an OPENCV-like extensible interface for easily porting OPENCV 
+	//	applications.
+	//	
+	//	Contacts :
+	//		patrick.horain@it-sudparis.eu
+	//		gpucv-developers@picoforge.int-evry.fr
+	//	
+	//	Project's Home Page :
+	//		https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHome
+	//	
+	//	This software is governed by the CeCILL-B license under French law and
+	//	abiding by the rules of distribution of free software.  You can  use, 
+	//	modify and/ or redistribute the software under the terms of the CeCILL-B
+	//	license as circulated by CEA, CNRS and INRIA at the following URL
+	//	"http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html". 
+	//	
+	//================================================================CVG_LicenseEnd
+	//..Your name and optinal informations..
+
+	#ifndef __GPUCV_CXCOREG_CONFIG_H
+	#define __GPUCV_CXCOREG_CONFIG_H
+
+	#ifdef __cplusplus
+	#include <GPUCV/config.h>
+	#include <GPUCVCore/include.h>
+	#endif
+
+	//Import/export definitions
+	#ifdef _WINDOWS
+	#ifdef _GPUCV_CXCOREG_DLL
+	#define _GPUCV_CXCOREG_EXPORT			__declspec(dllexport)
+	#define _GPUCV_CXCOREG_EXPORT_C		extern "C"  _GPUCV_CXCOREG_EXPORT
+	#else
+	#define _GPUCV_CXCOREG_EXPORT			__declspec(dllimport)
+	#define _GPUCV_CXCOREG_EXPORT_C		extern "C" _GPUCV_CXCOREG_EXPORT
+	#endif
+	#else
+	#define _GPUCV_CXCOREG_EXPORT
+	#define _GPUCV_CXCOREG_EXPORT_C
+	#endif
+
+	#endif//GPUCV_CXCOREG_CONFIG_H
+\endcode
+
+
+\par include/$(PRJ_NAME)$/$(PRJ_NAME)$.h
+=> Replace all instances of "GPUCV_CXCOREG" by your new project name "_GPUCV_$(PRJ_NAME)$".
+\note Please add some doxygen style comments.
+\code
+//..LICENCE..
+#ifndef __GPUCV_CXCOREG_H
+#define __GPUCV_CXCOREG_H
+
+/**	\brief Header file containg definitions for the GPU equivalent OpenCV functions
+*	\author ....
+*	\version GuCV v0.4.?? rev ???
+*/
+
+//..you muse include your new config file from HERE
+#include <$(PRJ_NAME)$/config.h>
+
+//$(PRJ_NAME)$ reference =============================================================
+//_______________________________________________________________
+//_______________________________________________________________
+//_______________________________________________________________
+/** @addtogroup  $(PRJ_NAME)$_???_GRP
+*  @{
+*/
+/*! 
+*	\brief GPUCV correspondence of <a href="http://picoforge.int-evry.fr/projects/svn/gpucv/opencv_doc/ref/opencvref_cxcore.htm#decl_cv??" target=new>cv???</a> function.
+*	..Doxygen documentation of the operator..
+*/
+_GPUCV_CXCOREG_EXPORT_C 
+IplImage* cvg??(CvSize size, int depth, int channels );
+
+...
+...
+...
+/** @}*///$(PRJ_NAME)$_???_GRP
+//_______________________________________________________________
+//_______________________________________________________________
+\endcode
+\warning It is important for the function to be exported with "C style" so they can be used by most application and the switch mechanism.
+
+
+
+\par src/lib/$(PRJ_NAME)$/$(PRJ_NAME)$.cpp
+=> Replace all instances of "GPUCV_CXCOREG" by your new project name "_GPUCV_$(PRJ_NAME)$".
+\code
+//..LICENSE..
+#include "StdAfx.h"
+#include <$(PRJ_NAME)$/$(PRJ_NAME)$.h>
+#include <cvg/cvg.h>
+#include <GPUCVTexture/TextureTemp.h>
+#include <highguig/highguig.h>
+#include <GPUCV/misc.h>
+
+/** \file $(PRJ_NAME)$.cpp
+\author ???
+\brief Contains ....
+*/
+
+#if _GPUCV_DEBUG_MEMORY_LEAK
+#include "SugoiTools/debug_new.h"
+#endif
+
+_GPUCV_HARDWARE_NP_USE
+
+//DLL descriptions, it will be discuss later
+{..}
+//===================================
+
+//___________________________________________________
+//___________________________________________________
+//___________________________________________________
+//===================================================
+//=>start $(PRJ_NAME)$_??_GRP
+//===================================================
+void cvg_??( CvSize size, int depth, int channels )
+{
+	
+}
+//===================================================
+//=>stop  $(PRJ_NAME)$_??_GRP
+//===================================================
+#if _GPUCV_DEBUG_MEMORY_LEAK
+#include "SugoiTools/debug_new_off.h"
+#endif
+
+\endcode
+
+\par src/lib/$(PRJ_NAME)$/StdAfx.h
+\code
+// stdafx.h : include file for standard system include files,
+// or project specific include files that are used frequently, but
+// are changed infrequently
+//
+#pragma once
+#include "../../lib/GPUCV/StdAfx.h"
+
+//..place here some other external headers..
+\endcode
+
+
+ 
+ * \section TUTO_CREATE_PLUGIN__STP2__ADD_OPERATORS Collect existing operators into the new plugin.
+ * <i>Tag:</i> <b>TUTO_CREATE_PLUGIN_TAG__STP2__ADD_OPERATORS</b><br>
+ 
+ * \section TUTO_CREATE_PLUGIN__STP3__PLUGIN_DESCRIPTION Plugin description.
+ * <i>Tag:</i> <b>TUTO_CREATE_PLUGIN_TAG__STP3__PLUGIN_DESCRIPTION</b><br>
+ Each plugin must contain a small description(LibraryDescriptor) to be correctly identified and a function to export them. Your main CPP file must contains those declarations:
+ \code 
+ {...}
+ #include <GPUCVHardware/moduleInfo.h>
+ {...}
+//DLL descriptions.
+LibraryDescriptor $(PRJ_NAME)$_LibraryDescriptor={
+	"0.4"		// Major version.
+	,"0.???"		// Minor version.
+	,"???"		// Store the revision SVN number.
+	,"???"		// Store the revision SVN date.
+	,"???"		// Store the plugin information URL.
+	,"???"	// Contact person(s)
+	,"$(PRJ_NAME)$"
+	,"GLSL|opencv|CUDA|....???"//!< Name of the processing technology used, ex: GLSL, CUDA, SSE, etc
+	,true|false???		// Flag to specify if this lib is using Gpu.
+};
+
+//DLL description export
+_GPUCV_CXCOREG_EXPORT_C LibraryDescriptor *modGetLibraryDescriptor(void)
+{
+	return &$(PRJ_NAME)$_LibraryDescriptor;
+}
+ \endcode
+ 
+ 
+ * \section TUTO_CREATE_PLUGIN__STP4__PLUGIN_TEST_BENCH Test and benchmark operators from the plugin.
+ * <i>Tag:</i> <b>TUTO_CREATE_PLUGIN_TAG__STP4__PLUGIN_TEST_BENCH</b><br>
+ Your plugin should contains a function named "$(PRJ_NAME)$_runAll" that will test and benchmark your operators. [MORE_HERE]
+  
+ * \section TUTO_CREATE_PLUGIN__STP5__USE Use plugin operators into an existing application.
+ * <i>Tag:</i> <b>TUTO_CREATE_PLUGIN_TAG__STP5__USE</b><br>
+  [MORE_HERE]
+*/
+
+ 

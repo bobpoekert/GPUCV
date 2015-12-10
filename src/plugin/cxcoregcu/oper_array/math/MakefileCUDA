@@ -1,0 +1,13 @@
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	pow.filter.cu
+
+CCFILES 	:= math.cpp
+
+SHARED_LIB_TEMP = cxcoregcu
+NO_LINKING=0
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+

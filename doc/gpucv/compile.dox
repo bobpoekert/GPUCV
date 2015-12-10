@@ -1,0 +1,269 @@
+/*! \page COMPILE_PAGE Compiling GpuCV
+ * 
+ * \par Topics:
+ <ul>
+	 <li>\ref COMPILE_GPUCV_SCT__GETCODE</li>
+	 <li>\ref COMPILE_GPUCV_SCT__BATCH</li>
+	 <li>\ref COMPILE_GPUCV_SCT__MANUAL
+	 <ul>
+		 <li>\ref COMPILE_GPUCV_SCT__SUB1_WINDOWS</li>
+		 <li>\ref COMPILE_GPUCV_SCT__SUB2_LINUX</li>
+		 <li>\ref COMPILE_GPUCV_SCT__SUB3_ECLIPSE</li>
+		 <li>\ref COMPILE_GPUCV_SCT__SUB4_KDevelop</li>
+	 </ul></li>
+	 <li>\ref COMPILE_GPUCV_SCT__TIPS</li>
+	 <li>\ref COMPILE_GPUCV_SCT__DEPENDENCIES</li>
+	 <li>\ref COMPILE_GPUCV_SCT__PLUGINS</li>
+	 <li>\ref FAQ_COMPILE_GRP</li>
+ </ul>	
+ 
+
+ * \section COMPILE_GPUCV_SCT__GETCODE Get source code
+
+ GpuCV stable project can be downloaded from <a href="https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHomeDownload">here</a>.
+ <br>
+ <br>GpuCV latest source code and dependencies can be check out from the svn respository at:
+ <table>
+ <tr>
+ <td>Stable</td>
+ <td>
+	\code
+ 	//login: guest
+ 	//password: guest
+ 	svn co svn+ssh://guest@picoforge.int-evry.fr/gpucv/trunk/gpucv gpucv_working_copy
+	\endcode
+</td>
+</tr>
+<tr>
+<td>Experimental</td><td>
+	\code
+ 	//login: guest
+ 	//password: guest
+ 	svn co svn+ssh://guest@picoforge.int-evry.fr/gpucv/experimental/trunk/gpucv gpucv_working_copy
+	\endcode
+</td></tr>
+</table>
+\note Some external dependencies (ex: SugoiTools) will be checked out as well in ./gpucv/dependencies/ folder.
+\note Your SVN tool might ask you the password several times.
+\note If you need to customize some path, see section \ref COMPILE_GPUCV_SCT__CUSTOMIZE or libraries.
+
+
+ * \section COMPILE_GPUCV_SCT__BATCH Batch-compiling
+All platform targets can be quickly compiled using the Premake tool depending on your OS and compiling chain. The generated project files and solutions can be found in "./gpucv/build".
+
+\par Compiling commands:
+<table border='1' width='600'>
+<tr><td>OS</td><td width="200">Generate project files</td><td width="200">Batch compile</td></tr>
+<tr>
+<td>MS Windows *</td>
+<td>\code premake4.exe vs2008 \endcode or<br>\code premake4.exe vs2005 \endcode</td>
+<td>\code premake4.exe --platform=x64 compile_vs2008 \endcode or<br> \code premake4.exe --platform=x64 compile_vs2005 \endcode</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>\code ./premake4.linux gmake \endcode</td>
+<td>\code ./premake4.linux --platform=x64 compile_gmake \endcode</td>
+</tr>
+<tr>
+<td>MacOS X</td>
+<td>\code ... \endcode</td>
+<td>\code ... \endcode</td>
+</tr>
+</table>
+
+\par Additional compiling options:
+<table border='1' width='600'>
+<tr><td>Flag</td><td width="600">Description</td></tr>
+<tr><td>'--verbose'</td><td>Output compiling log to console, otherwise log files will be generated in "./gpucv/tmp/" folder.</td></tr>
+<tr><td>'--platform=[x32|x64]</td><td>Try to compile as x32 or x64 target, default is to compile both</td></tr>
+<tr><td>'--help'</td><td>Print all available options</td></tr>
+</table>
+
+ * \section COMPILE_GPUCV_SCT__MANUAL Compile manualy 
+MS Visual Studio solutions and gnu Makefiles are available in the "./gpucv/build" folder for manual build.
+
+ * \subsection COMPILE_GPUCV_SCT__SUB1_WINDOWS Compile with Microsoft Visual Studio
+<ol>
+	<li>Open the <b>"./gpucv/build/windows-vs20XX'/GpuCV.sln"</b> solution corresponding to your interface of development.</li>
+	<li>Choose your target architecture/configuration and compile.
+	<li>To try a sample application, set the project <b>GPUCVConsole</b> as 'Start Up Project'.</li>
+</ol> 
+
+\par Compiling for x86_64 platforms using Visual Studio 2005 for brevity:
+To compile for x86_64 platforms, you will need to perfoms some additional customization steps in Visual Sudio:
+<ol>
+	<li>Open the corresponding 64vs2005 solution</li>
+	<li>Open Menu "Buid->Configuration manager" and set "Active platform solution" to "new" and "x64", then close the dialog window.</li>
+	<li>Select all project at once and right click to get their common properties</li>
+	<li>In "Configuration Properties->General" set "Output directory" to "../../../bin/vs2005/" and "Intermediate Directory" to your prefered output path, ex: "c:\temp\build\gpucv\Debug\64vs2005\$(ParentName)" or "../../../Debug\64vs2005\$(ParentName)"</li>
+</ol>
+\note You might also need to compile opencv in for x64 architecture, see \ref COMPILE_GPUCV_SCT__DEPENDENCIES__SUBSECT_OPENCV_VS.
+
+ \subsection COMPILE_GPUCV_SCT__SUB2_LINUX Compile from LINUX Shell
+ <ol>
+	<li>Go into <b>./gpucv/</b></li>
+	<li>Compile, '-j' option can be used to speed up compiling on multiple cores:
+		\code 
+			export config=[debug32|release32|release64|debug64]
+			make -C build/linux-gmake/ [-j]
+		\endcode
+	</li>
+</ol> 
+
+ \subsection COMPILE_GPUCV_SCT__SUB3_ECLIPSE Compile with Eclipse
+ GpuCV project comes with an Eclipse solution file "./gpucv/.project".
+ <ol>
+	 <li>Open Eclipse and choose/create your workspace.</li>
+	 <li>Import GpuCV project: <b>File->Import</b></li>
+		<ul>
+			<li>You have an existing working copy of GpuCV:
+			Select <b>General->Existing Projects into Workspace</b>.
+			Set local path.
+			</li>
+			<li>You want to checkout from the svn repository:
+			Select <b>Other->Checkout Projects from SVN</b>. 
+			Then <b>Create a new repository from location</b>. 
+			Give the SVN URL given in <a href="https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHomeDownload#SVN_repositories">here</a> and follow steps.
+			</li>
+		</ul>
+	 <li>Open the C/C++ perspective.</li>
+	 <li>GpuCV supplies a set of make commands for every libs and programmes, open the <b>Make</b> window and go to "./build/linux-gmake/".</li>
+ </ol>
+ 
+ \subsection COMPILE_GPUCV_SCT__SUB4_KDevelop Compile with KDevelop
+ GpuCV project dos not come with KDevelop project. Here are the few step required to create one:
+ <ol>
+    <li>Checkout source code from SVN</li>
+	 <li>Open KDevelop and choose menu->Project->Import existing project:
+		<ul>
+		<li>Select your fresh checkout path</li>
+		<li>Select project type</li>
+		<li>Validate and select all source file type</li>
+		<li>Validate and select paths "build", "include", "src"</li>
+		</ul>
+	 <li>Open menu->Poject->Project Options->Build options:
+		<ul>
+		<li>Set the build folder to "./build/linux-gmake/", you might use absolute path.</li>
+		<li>Make: add environnement variable: "config=debug64".</li>
+		</ul>	
+	 </li>
+	<li>Open menu->Poject->Project Options->Run options:
+		<ul>
+		<li>Select the executable to run.</li>
+		<li>Set environnement variable LD_LIBRARY_PATH, see result of command: "./premake.x32.linux getpath"</li>
+		</ul>
+	 </li>
+	 <li>Compile and run.</li>
+ </ol>
+ 
+\section COMPILE_GPUCV_SCT__TIPS Improve compiling speed (under LINUX)
+Some tools like <a href="http://distcc.samba.org/">distcc</a> or <a href="http://ccache.samba.org/">ccache</a> can help you to improve the compiling speed. Check them out.
+DISTCC_POTENTIAL_HOSTS=localhost laptop desktop ps3 yannouchka-desktop
+
+\par ccache
+->"ccache is a compiler cache. It acts as a caching pre-processor to C/C++ compilers, using the -E compiler switch and a hash to detect when a compilation can be satisfied from cache. This often results in a 5 to 10 times speedup in common compilations."
+
+<br>Simply export the environnement variable CXX such as:
+\code
+export CXX="ccache g++"
+\endcode
+
+\par distcc
+->"distcc is a program to distribute builds of C, C++, Objective C or Objective C++ code across several machines on a network. distcc should always generate the same results as a local build, is simple to install and use, and is usually much faster than a local compile."
+
+<br>Simply export the environnement variable CXX such as:
+\code
+export CXX="ccache distcc g++"
+\endcode
+Then export the list of available server running distcc daemons:
+\code
+export DISTCC_HOSTS="localhost desktop"
+\endcode
+And run make with the number (locals + remotes) of concurrent threads used to compile:
+\code
+make -j8
+\endcode
+
+
+* \section COMPILE_GPUCV_SCT__DEPENDENCIES Compiling dependencies
+Any dependencies properties such as:
+<ul>
+<li>Include paths</li>
+<li>Library paths</li>
+<li>Libraries to link with</li>
+<li>etc...</li>
+</ul>
+...is defined in files located in "./gpucv/etc/Premake".
+
+* \subsection COMPILE_GPUCV_SCT__DEPENDENCIES__SUBSECT_OPENCV_VS Compiling OpenCV 2.1 for Windows X64
+OpenCV 2.1 is not supplied with x64 binary files, manual compiling is required. Follow this steps (more informations on <a href="http://opencv.willowgarage.com/wiki/InstallGuide" target="blank">OpenCV web page</a>:
+\code
+//First, download and setup <a target="blank" href="http://www.cmake.org/cmake/resources/software.html">CMAKE</a>.
+//start the console
+Start menu->run->cmd.exe
+//go to your OpenCV folder, ex c:\program files\OpenCV2.1
+ex: cd "c:\program files\OpenCV2.1"
+mkdir opencv_x64
+cd opencv_x64
+cmake -D:CMAKE_BUILD_TYPE=RELEASE "c:\program files\OpenCV2.1" -G "Visual Studio 9 2008 Win64"
+//open the file .\release\OpenCV.sln with Visual Studio and build it as usual.
+//then create new directory in OpenCV root for lib64 and bin64
+cd ..
+mkdir lib64
+mkdir bin64
+//and copy library localy
+cp release_64\lib\release\* lib64
+cp release_64\bin\release\* bin64
+//GpuCV will include OpenCV\lib and lib64 in its research path.
+//folder opencv_x64 can be removed now!
+\endcode
+
+
+* \subsection COMPILE_GPUCV_SCT__DEPENDENCIES__SUBSECT_OPENCV_LINUX Compiling OpenCV 2.1 for Linux
+OpenCV 2.1 is not supplied with binary files for Linux, manual compiling is required. Follow this steps (more informations on <a href="http://opencv.willowgarage.com/wiki/InstallGuide" target="blank">OpenCV web page</a>:
+\code
+//First, setup CMAKE and gstreamer
+sudo yum install cmake gstreamer*
+//download OpenCV tar file: http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/
+
+//untar into a local working folder, ex: /home/MY_NAME/workspace/OpenCV2.1
+cd /home/MY_NAME/workspace/OpenCV2.1
+mkdir linux_cmake
+cd linux_cmake
+cmake -D:CMAKE_BUILD_TYPE=RELEASE ../
+#compile
+make
+#install
+sudo make install
+#as root, replace existing OpenCV library by new one
+rm -f /usr/lib64/libcv.so
+rm -f /usr/lib64/libcxcore.so
+rm -f /usr/lib64/libhighgui.so
+rm -f /usr/lib64/libcvaux.so
+ln -s /usr/local/lib/libcv.so /usr/lib64/libcv.so
+ln -s /usr/local/lib/libcxcore.so /usr/lib64/libcxcore.so
+ln -s /usr/local/lib/libhighgui.so /usr/lib64/libhighgui.so
+ln -s /usr/local/lib/libcvaux.so /usr/lib64/libcvaux.so
+
+#to replace back original OpenCV library
+rm /usr/lib64/libcv.so
+rm /usr/lib64/libcxcore.so
+rm /usr/lib64/libhighgui.so
+rm /usr/lib64/libcvaux.so
+ln -s /usr/lib64/libcv.so.1 /usr/lib64/libcv.so
+ln -s /usr/lib64/libcxcore.so.1 /usr/lib64/libcxcore.so
+ln -s /usr/lib64/libhighgui.so.1 /usr/lib64/libhighgui.so
+ln -s /usr/lib64/libcvaux.so.1 /usr/lib64/libcvaux.so
+
+\endcode
+
+ * \section COMPILE_GPUCV_SCT__MACOSX Compile under Mac OSX
+	\todo Write section on MACOSX port
+ * \section COMPILE_GPUCV_SCT__PLUGINS Compiling third-party plugins 
+	\todo Write section on plugin generation and compiling
+
+ * \section COMPILE_GPUCV_SCT__FAQ Compiling FAQ
+	See \ref FAQ_COMPILE_GRP
+*/
+
+

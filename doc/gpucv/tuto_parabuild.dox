@@ -1,0 +1,117 @@
+/*! 
+\page TUTO_PARABUILD Continues build with ParaBuild
+ * \section TUTO_PARABUILD__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ NONE.
+ \author Yannick Allusse
+ \version GpuCV v1.0 rev 540
+ \note State: draft
+ 
+ 
+\par
+In this tutorial, we will describe how to setup a continues build system based on <a href="http://www.viewtier.com/products/parabuild/index.htm" target="blank">ParaBuild</a> 
+<ol>
+	 <li>\ref TUTO_PARABUILD__STP1__SETUP</li>
+	 <li>\ref TUTO_PARABUILD__STP2__ADD_PROJECT</li>
+	 <li>\ref TUTO_PARABUILD__STP3__ADD_BUILD
+		<ul>
+			<li>\ref TUTO_PARABUILD__STP3__SUB1_ADD_BUILD</li>
+			<li>\ref TUTO_PARABUILD__STP3__SUB2_CHECKOUT</li>
+			<li>\ref TUTO_PARABUILD__STP3__SUB3_BUILD_STEPS</li>
+			<li>\ref TUTO_PARABUILD__STP4__SUB4_LOGS</li>
+		</ul>
+	 </li>
+</ol>
+
+
+*\section TUTO_PARABUILD__STP1__SETUP Setup
+
+<a href="http://www.viewtier.com/downloads.htm" arget="blank">Download the ParaBuild files</a> for your platform and follow setup instructions.
+Start service and connect to "http://localhost:8080/parabuild/index.htm" and login.
+
+\note On Linux X64, library glibc.i386 must be installed.
+
+*\section TUTO_PARABUILD__STP2__ADD_PROJECT Add project
+Go to menu "Administration"->General System Settings"->"Projects" and add a new project.
+
+*\section TUTO_PARABUILD__STP3__ADD_BUILD Add build configuration
+*\subsection TUTO_PARABUILD__STP3__SUB1_ADD_BUILD Create build
+When your ParaBuild service is up and running, add a new build for GpuCV.
+
+\par In "BUILDS" menu -> Add new build:
+<ul>
+<li>Build name: "GpuCV_%ARCH_%OS_%BUILD_TOOLS", with ARCH=[x32|x64], OS=[WindowsXP|WindowsVista|FedoraX|UbuntuX...] and BUILD_TOOLS=[gmake|vs2008|...]<br>
+Example:
+\code
+GpuCV_X32_WINXP32_VS2008
+\endcode</li>
+<li>Build result access: "Public"</li>
+<li>Project: "GpuCV"</li>
+<li>Version control : (Windows)"Generic VCS",(other)"Subversion" </li>
+<li>Build type: "Auto" </li>
+</ul>
+
+
+*\subsection TUTO_PARABUILD__STP3__SUB2_CHECKOUT Version control
+\par In "Version Control" Tab:
+<ul>
+<li>Path to svn executable: (Linux)"/usr/bin/svn", (windows)"..."</li>
+<li>SVN URL: "svn+ssh://guest@picoforge.int-evry.fr/"</li>
+<li>SVN user: "guest"</li>
+<li>SVN password: "guest"</li>
+<li>SVN repository path: "gpucv/experimental/trunk/gpucv/"</li>
+<li>(Optional)Custom checkout dir: Set your own checkout dir on a fast hard drive (ram disk for example)</li>
+</ul>
+
+*\subsection TUTO_PARABUILD__STP3__SUB3_BUILD_STEPS Build steps
+\note Use the correct version of Premake binary(premake4.exe, premake4.linux, premake4.osx).
+\par In "Build configuration" Tab:
+<ol>
+	<li>Build Step: "GENPROJECT", generation of project files
+		<ul><li>Commands:\code
+		premake4.exe  vs2008
+		\endcode
+		Other possible targets are: vs2005/gmake</li></ul>
+	</li>
+	<li>Build Step: "BUILD", compiling projects
+		<ul><li>Commands:\code
+		premake4.exe compile_vs2008
+		\endcode
+		Other possible targets are: compile_vs2005/compile_gmake</li></ul>
+	</li>
+	<li>(OPTIONAL) Build Step: "TEST", start test sequence on non Virtual Machine hosts.
+		<ul><li>Commands:\code
+		\endcode</li></ul>
+	</li>
+	<li>(OPTIONAL)Build Step: "BENCHMARKS", benchmarks all the operators on the host platform
+		<ul><li>Commands:\code
+		\endcode</li></ul>
+	</li>
+	<li>Build Step: "MAKEDOC", generate documenation
+		<ul><li>Commands:\code
+		premake4.exe makedoc
+		\endcode</li></ul>
+	</li>
+	<li>Build Step: "ZIPBIN", zip project with binary files
+		<ul><li>Commands:\code
+		premake4.exe --zip-name="GpuCV-bin" zip
+		\endcode</li></ul>
+	</li>
+	<li>Build Step: "ZIPSRC", zip project with source files
+		<ul><li>Commands:\code
+		premake4.exe clean
+		premake4.exe --zip-name="GpuCV-src" zip
+		\endcode</li></ul>
+	</li>
+	<li>(OPTIONAL)Build Step: "FTPUP", upload zip files to ftp server
+		<ul><li>Commands:\code
+		\endcode</li></ul>
+	</li>
+</ol>
+
+
+*\subsection TUTO_PARABUILD__STP4__SUB4_LOGS Logs
+\par In "Logs" Tab:
+<ol>
+</ol>
+*/

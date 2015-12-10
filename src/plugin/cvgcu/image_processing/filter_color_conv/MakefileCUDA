@@ -1,0 +1,19 @@
+
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	cvtcolor.filter.cu\
+			integral.filter.cu\
+			smooth.filter.cu\
+			threshold.filter.cu
+
+CCFILES 	:= 
+#cvgcu_imgproc_filter.cpp
+
+SHARED_LIB_TEMP = cvgcu
+NO_LINKING=0
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+
+

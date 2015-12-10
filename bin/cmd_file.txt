@@ -1,0 +1,171 @@
+disable debug;
+disable showimage;
+disable warning;
+enable cuda;
+enable glsl;
+disable ipp;
+loopnbr 10;
+resizeimg 2048 2048;
+add;
+resizeimg 1024 1024;
+add;
+resizeimg 128 128;
+add;
+imgformat src1 8u 1;
+imgformat src2 8u 1;
+resizeimg 2048 2048;
+add;
+resizeimg 1024 1024;
+add;
+resizeimg 128 128;
+add;
+imgformat src1 32f 3;
+imgformat src2 32f 3;
+resizeimg 2048 2048;
+add;
+resizeimg 1024 1024;
+add;
+resizeimg 128 128;
+add;
+imgformat src1 32f 1;
+imgformat src2 32f 1;
+resizeimg 2048 2048;
+add;
+resizeimg 1024 1024;
+add;
+resizeimg 128 128;
+add;
+savebench format_check.xml;
+cmdclear;
+
+
+
+
+loadbench benchmark.8800.xml;
+runbench 10;
+savebench benchmark_480.xml;
+cmdclear;
+q;
+resizeimg 640 480;
+cxcore_all;
+cmdclear;
+
+
+cxcore_all;
+cmdclear;
+q;
+
+
+loopnbr 10;
+resizeimg 128 128;
+q;
+
+q;
+savebench benchmark.xml;
+resizeimg 2048 2048;
+and;
+resizeimg 1024 1024;
+cxcore_all;
+
+
+runbench 10;
+
+cv_all;
+
+
+cv_all;
+
+gpucvstats;
+
+resizeimg 2048 2048;
+runbench 3;
+cmdclear;
+imgformat src1 8u 3;
+imgformat src2 8u 3;
+
+loopnbr 10;
+pow 2;
+histo64;
+histo256;
+
+cv_all;
+histo64;
+histo256;
+q;
+
+
+runbench 10;
+savebench test.xml;
+cmdclear;
+
+
+loopnbr 10;
+cxcore_all;
+cv_all;
+histo64;
+histo256;
+q;
+
+crash histo:
+runbench 10;
+
+resizeimg 2048 2048;
+loopnbr 10;
+
+
+
+
+
+
+
+
+
+
+histo 256;
+cmdclear;
+loopnbr 100;
+
+
+
+
+cmdclear;
+
+split 3;
+cmdclear;
+
+
+
+enable  debug;
+enable  showimage;
+enable  warning;
+enable opencv;
+disable cuda;
+imgformat src1 8u 3;
+imgformat src2 8u 3;
+sub;
+cmdclear;
+
+
+
+
+loopnbr 20;
+q;
+addweighted 2 2 1;
+scaleadd 2 2 2 2;
+cmp 0;
+
+
+
+cxcore_all;
+q;
+
+addweighted 2 2 1;
+scaleadd 2 2 2 2;
+cmp 0;
+merge;
+
+
+sobel 1 0 3;
+sobel 0 1 3;
+sobel 0 1 -1;
+sobel 1 0 -1;

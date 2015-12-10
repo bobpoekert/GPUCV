@@ -1,0 +1,82 @@
+/*! \page CVTIPS_PAGE OpenCV  programming tips and restrictions
+ * 
+ * \par Setup steps
+ <ul>
+	 <li>\ref CVTIPS_SCT__COMPAT</li>
+	 <li>\ref CVTIPS_SCT__PERF</li>
+	 <li>...</li>
+ </ul>	
+ *
+Converting an OpenCV code to GpuCV code is a trivial changes as long as the following coding rules are taken into consideration.
+
+ * \section CVTIPS_SCT__COMPAT OpenCV and GpuCV compatibilty issues
+
+\subsection CVTIPS_SCT__COMPAT_IMAGEDATA Direct call to IplImage::imageData and CvMat::data are forbidden!
+GpuCV intercept calls to cvGetRawData() and other functions that return a pointer to the CvArr data buffer. If you do use IplImage::imageData manually, GpuCV is not aware of your changes and you might get one of the following behavior:
+<ul>
+<li>You write to IplImage::imageData:
+\code 
+MyImage->imageData[x] = value;
+\endcode
+	<ul>
+	<li>Data are in RAM: your changes might be reproduced to image on GPU.</li>
+	<li>Data are not in RAM: your application will crash as there is no memory in RAM. This is a <i>feature</i> to detect the call IplImage::imageData when you should use OpenCV calls.	
+	</ul> 
+</li>
+<li>You read from IplImage::imageData:
+\code 
+value = MyImage->imageData[x];
+\endcode
+	<ul>
+	<li>Data are in RAM: as GpuCV does not keep old data in RAM, you have access to latest data available.</li>
+	<li>Data are not in RAM: your application will crash for the same reason as above.	
+	</ul> 
+</li>
+</ul>
+
+Unless you feel in a lucky day, you should update your code with:
+\code 
+char * pData = cvGetRawData(MyImage);
+value = pData[x];
+\endcode
+
+
+ * \section CVTIPS_SCT__PERF OpenCV performances tips
+
+\subsection CVTIPS_SCT__PERF_REUSE Re-use your data (IplImage/CvMat) has much as possible in your loops
+If your application is processing a video stream, you might have a lot of temporary object that are used into each frame. Genaral programming optimization would say to avoid creating/destroying theses object for each frames, this is still true when you are using GpuCV. GpuCV has to create/destroy several objects for each OpenCV objects, we use some internal recycler to avoir allocating memory to often but you should keep allocation/destruction of object as low as possible.
+
+
+\subsection CVTIPS_SCT__PERF_AVOIDCALL Avoid calling cvGet*D() and cvSet*D()
+If your are accessing images data threw cvGet*D() and cvSet*D() in large loop you should consider working on the data buffer directly to have better performances. This is even more important when using GpuCV. 
+<br>So you should write:
+\code 
+char * pData = cvGetRawData(MyImage);
+for(int y=0; y < height; y++)
+for(int x=0; x < width; x++)
+{
+	pData[x+y*width]=val[..];
+}
+cvSetRawData(MyImage, pData);
+//or
+char * pData = cvGetRawData(MyImage);
+char * pDataTmp = pData;
+
+for(int y=0; y < height; y++)
+for(int x=0; x < width; x++)
+{
+	pDataTmp=val[..];
+	pDataTmp++;
+}
+cvSetRawData(MyImage, pData);
+\endcode
+<br>Instead of:
+\code 
+for(int y=0; y < width; y++)
+for(int x=0; x < width; x++)
+{
+	cvSet2D(MyImage, x, y, val[..]);
+}
+\endcode
+
+*/

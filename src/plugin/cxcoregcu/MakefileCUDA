@@ -1,0 +1,21 @@
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	cxcoregcu_array.filter.cu\
+			cxcoregcu_array_transform.cu
+
+			
+
+CCFILES 	:= 	cxcoregcu.cpp\
+			cvgcudalocalsum.cpp
+
+
+SHARED_LIB_TEMP = cxcoregcu
+NO_LINKING=2
+SRCDIR = ./
+ROOTDIR = ../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+
+#rm $(find .  -name '*.cpp*.i*' -o -name '*.cu.cpp' -o -name '*.*cudafe*' -o -name '*.ptx' -o -name '*.sm_*.cubin' -o -name '*.hash' -o -name '*.fatbin*' -o -name '*.linkinfo')
+##############################################################################
+

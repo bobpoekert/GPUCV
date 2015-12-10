@@ -1,0 +1,5 @@
+# sed script to insert .txt above the first line
+1{h; r LicenseEN_header.txt
+  D; }
+2{x; G;}
+#---end of sed script---

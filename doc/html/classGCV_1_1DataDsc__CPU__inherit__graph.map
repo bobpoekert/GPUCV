@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$classGCV_1_1DataDsc__CvMat.html" title="DataDsc_CvMat class describes the CvMat data storage into central memory, it is used..." alt="" coords="5,315,157,344"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__IplImage.html" title="DataDsc_IplImage class describes the IplImage data storage into central memory, it..." alt="" coords="181,315,344,344"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__Base.html" title="DataDsc_Base is the base class to describe a kind of data associated with its location..." alt="" coords="100,160,244,189"/>
+<area shape="rect" href="$classGCV_1_1CL__Profiler.html" title="Contains main class and macros for profiling/debugging object and functions. Internal..." alt="" coords="27,83,147,112"/>
+<area shape="rect" href="$classGCV_1_1CL__Options.html" title="Supply a Push/Pop mechanism for options parameters." alt="" coords="25,5,148,35"/>
+<area shape="rect" href="$classGCV_1_1TextSize.html" title="GCV::TextSize\&lt; GLsizei \&gt;" alt="" coords="171,83,347,112"/>
+</map>

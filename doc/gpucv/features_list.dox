@@ -1,0 +1,7 @@
+/*! \page FEATURES_LIST_PAGE "Features list"
+ * \section FEATURES_LIST_SECT_INTRO
+  <ol>
+	 <li>\ref FEATURES__MEMORY_MNGT</li>
+	 <li>\ref FEATURES__OPENCV_ABSTRACTION</li>
+ </ol>
+*/

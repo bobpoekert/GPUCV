@@ -1,0 +1,215 @@
+/*! \page SETUP_PAGE Preparing your system to run or compile GpuCV
+
+ * 
+
+ * \par Setup steps
+
+ <ol>
+
+	 <li>\ref SETUP_GPUCV_SCT__SUPPORTED</li>
+
+	 <li>\ref SETUP_GPUCV_SCT__DEPENDENCIES</li>
+
+ </ol>	
+
+ *
+
+ * \section SETUP_GPUCV_SCT__SUPPORTED Supported OS and hardware
+
+CONVENTION:
+ <ul>
+ 	<li>? : community support and contributions are welcome</li>
+ 	<li>No: Cannot be supported due to hardware/software constraints</li>
+</ul>
+
+
+ * \subsection SETUP_GPUCV_SCT__SUPPORTED_OS OS supported
+GpuCV-1.0 has been tested on the follwing plaftorms:
+<table border="1">
+<tr><td width='150'>OS Name</td><td idth='150'>Version</td><td idth='150'>Architecture</td><td idth='150'>Compile</td><td idth='150'>Execute</td><td idth='150'>Support</td></tr>
+<tr><td rowspan=6>Microsoft Windows</td><td rowspan=2>XP</td><td>32 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>64 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td rowspan=2>Vista</td><td>32 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>64 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td rowspan=2>7</td><td>32 bits</td><td>?</td><td>?</td><td>?</td></tr>
+<tr><td>64 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+
+<tr><td rowspan=4>Linux</td><td rowspan=2>Fedora 10</td><td>32 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>64 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td rowspan=2>Ubuntu</td><td>32 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>64 bits</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+
+<tr><td rowspan=2>Mac OSX</td><td rowspan=2>Snow Leopard</td><td>32 bits</td><td>?</td><td>?</td><td>?</td></tr>
+<tr><td>64 bits</td><td>?</td><td>?</td><td>?</td></tr>
+
+</table>
+
+ * \subsection SETUP_GPUCV_SCT__SUPPORTED_HARDWARE Hardwares supported
+
+
+<table border="1">
+<tr><td idth='150'>Vendor</td><td idth='150'>Family</td><td idth='150'>OpenGL-2.0(GLSL)</td><td idth='150'>CUDA-3.0</td><td idth='150'>OpenCL-1.0</td></tr>
+<tr><td rowspan=5>NVIDIA</td><td>TESLA</td><td>?</td><td>?</td><td>?</td></tr>
+<tr><td>Fermi  (GT3xx)</td><td>Yes</td><td>Yes</td><td>?</td></tr>
+<tr><td>Geforce GT2xx</td><td>Yes</td><td>Yes</td><td>?</td></tr>
+    <tr><td>Geforce 8xxx & 9xxx</td><td>Yes</td><td>Yes</td><td>?</td></tr>
+<tr><td>Geforce 7xxx and before</td><td>Yes</td><td>No</td><td>No</td></tr>
+
+<tr><td rowspan=3>AMD/ATI</td><td>Radeon 5xxx</td><td>Yes</td><td>No</td><td>?</td></tr>
+<tr><td>radeon 4xxx</td><td>Yes</td><td>No</td><td>?</td></tr>
+<tr><td>radeon 3xxx and before</td><td>Yes</td><td>No</td><td>No</td></tr>
+
+<tr><td rowspan=1>INTEL</td><td>-</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td rowspan=1>VIA</td><td>-</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td rowspan=1>MATROX</td><td>-</td><td>Yes</td><td>No</td><td>No</td></tr>
+
+</table>
+
+
+
+ * \section SETUP_GPUCV_SCT__DEPENDENCIES Software Requirements for GPUCV-1.0
+
+\par GPUCV is using numerous libraries to link and run such as:
+	<ul>
+
+		<li>OpenCV</li>
+
+		<li>OpenGL - 2.0 or more</li>
+
+		<li>GLUT</li>
+
+		<li>GLU</li>
+
+		<li>GLEW 1.5.x</li>
+
+		<li><a href="http://sourceforge.net/projects/sugoitools/">SugoiTools</a>: Included int the project dependencies</li>
+
+		<li>NVIDIA CUDA. See \ref SETUP_GPUCV_CUDA_PAGE "Setup GpuCV with CUDA" for more details.</li>
+	</ul>
+	
+\par Specific version support chart:
+	<table border="1">
+	<tr><td width='150'>Library</td><td width='150'>Version</td><td width='150'>Compile</td><td width='150'>Execute</td><td width='150'>Support</td></tr>
+	<tr><td rowspan=2>OpenCV</td><td>1.x</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+	<tr><td>2.x and above</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+
+	<tr><td rowspan=1>OpenGL</td><td>2.0</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+
+	<tr><td rowspan=3>CUDA</td><tr><td>2.x </td><td>No</td><td>No</td><td>No</td></tr>
+	<tr><td>3.0 and 3.1</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+
+	<tr><td rowspan=1>OpenCL</td><td>1.0</td><td>?</td><td>?</td><td>?</td></tr>
+	</table>
+	
+\par Some additional tools are used to compile/use/debug Gpucv:
+	<ul>
+	 	<li>Premake, to generate projects and Makefiles (included into release)</li>
+		 <li>A compiler chain:
+		 	<ul>
+			 <li>For windows: MS Visual 2005/2008</li>
+			 <li>For Linux: make and gcc-4.3.x or less</li>
+			</ul>
+		 </li>
+		 <li>Doxygen, to generate documentation</li>
+		 <li>CUDA Visual Profiler, see \ref SETUP_GPUCV_CUDA_PAGE to setup and \ref TOOLS_CUDAPROF_PAGE.</li>
+		 <li>Subversion, to get latest code</li>
+		 <li>Optional tools:
+		 	<ul>
+				<li><a href="http://www.vis.uni-stuttgart.de/glsldevil/" target="blank">glslDevil</a>, to debug GLSL shader inside GpuCV</li>
+				<li><a href="http://www.gremedy.com" target="blank">gDebugger</a>, to debug OpenGL inside GpuCV</li>
+			</ul>
+		</li>
+	</ul>
+</ul>
+<br>
+
+*\subsection SETUP_GPUCV_SCT__DEPENDENCIES_MSW Microsoft Windows
+
+Download and setup all required libraries or use the supplied resources archive from GpuCV to get an environment ready to compile quickly. 
+Setup tools manually...
+\par OpenCV: Add OPENCV_PATH and OPENCV_VERSION
+To compile properly, GpuCV needs to have some environnement variables set:
+<table border="1">
+<tr><td>OPENCV_PATH</td><td>Path to OpenCV setup folder</td></tr>
+<tr><td>OPENCV_VERSION</td><td>OpenCV version number, as "210" for "2.1.0". </td></tr>
+</table>
+
+
+*\subsection SETUP_GPUCV_SCT__DEPENDENCIES_MACOSX Mac OSX
+Please make sur you have the latest Xcode 3.2.1 Developer Tools from <a href="http://connect.apple.com">Apple</a>. You may also need to setup the <a href="http://www.finkproject.org/index.php">FINK</a> project to use "apt-get" and UNIX Open Sources packages on Mac OS X.
+
+
+
+	
+
+*\subsection SETUP_GPUCV_SCT__DEPENDENCIES_LINUX_MACOSX Under Linux or Mac OS
+
+Please update your linux distribution to match the corresponding package list.
+
+
+\par Using 'apt-get' package installer (Ubuntu...):
+\code
+#must be done as root
+
+#install OpenCV lib and dev files
+
+#opencv might require lot of dependencies
+
+apt-get install opencv-doc libcv1 libhighgui1 libcvaux1 libcv-dev libhighgui-dev libcv-dev
+
+
+
+#install OpenGL relative packages
+
+apt-get install freeglut3 freeglut3-dev glew-utils libglew1.5-dev
+
+#install all required tools
+
+#install subversion and doxygen
+
+apt-get install subversion doxygen graphviz
+
+#on fresh install (Ubuntu 10.1)
+apt-get install g++
+\endcode
+
+\par Using 'yum' package installer (Fedora...):
+\code
+#Using 'yum' package installer:
+
+#must be done as root
+
+#install OpenCV lib and dev files
+
+#opencv might require lot of dependencies
+yum install -y opencv opencv-devel
+#for x32 support on x64 OS
+yum install -y opencv.i386 opencv-devel
+
+
+#install OpenGL relative packages
+yum install -y freeglut freeglut-devel glew glew-devel
+#for x32 support on x64 OS
+yum install -y freeglut.i386 freeglut-devel.i386 glew.i386 glew-devel
+
+
+#install all required tools
+
+#install subversion and doxygen
+
+yum install -y subversion doxygen graphviz
+\endcode
+
+
+
+\note See \ref SETUP_GPUCV_CUDA_PAGE "Setup GpuCV with CUDA" for detailed setup.
+
+
+
+\par Premake scripting package
+If you want to design new plugins or customize GpuCV builds, you need to install Premake on your system:
+\warning If Premake binary does not work directly, get the SVN version from the website.
+
+
+*/
+

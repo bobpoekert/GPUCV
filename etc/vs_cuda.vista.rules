@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="GpuCVCUDA-X86"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="GpuCVCUDA"
+			DisplayName="GpuCVCUDA"
+			CommandLine="nvcc.exe -ccbin &quot;$(VCInstallDir)bin&quot; [Emulation] [KeepIntermediate] -c [Defines] [DefineUseCudpp] [DefineUseCufft] [DefineUseOpenGL] [DefineUseDirectX] [DefineUseDoubleImgFormat] [DefineUseAllImgFormat] -Xcompiler &quot;/EHsc [Warning] /nologo [Optimization] /Zi [RuntimeChecks] [Runtime] [TypeInfo]&quot; [Include] -I&quot;$(CUDA_INC_PATH)&quot; -I&quot;C:\ProgramData\NVIDIA Corporation\NVIDIA CUDA SDK/common/inc&quot; -I&quot;./&quot; -I&quot;../../../../resources/include/&quot; -I&quot;../../../../resources/include/cv/include&quot; -I&quot;../../../../resources/include/cxcore/include&quot; -I&quot;../../../../resources/include/cvaux/include&quot; -I&quot;../../../src/lib/GPUCV&quot; -I&quot;../../../include/&quot; -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;"
+			Outputs="$(IntDir)\$(InputName).obj"
+			FileExtensions="*.cu"
+			ExecutionDescription="Compiling $(InputFileName)"
+			>
+			<Properties>
+				<StringProperty
+					Name="Include"
+					DisplayName="Additional Include Directories"
+					Description="Specifies one or more directories to add to the include path; use semi-colon delimited list if more than one.   (/I[path])"
+					Switch="-I[value]"
+					Delimited="true"
+					Delimiters=";"
+					Inheritable="true"
+				/>
+				<EnumProperty
+					Name="Optimization"
+					DisplayName="Optimization"
+					PropertyPageName="Optimization"
+					Description="Select option for code optimization; choose Custom to use specific optimization options.  (/Od, /O1, /O2, /Ox)"
+					DefaultValue="2"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/Od"
+							DisplayName="Disabled (/Od)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/O1"
+							DisplayName="Minimize Size (/O1)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/O2"
+							DisplayName="Maximize Speed (/O2)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/Ox"
+							DisplayName="Full Optimization (/Ox)"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="Defines"
+					DisplayName="Preprocessor Definitions"
+					PropertyPageName="Preprocessor"
+					Description="Specifies one or more preprocessor defines.   (/D[macro])"
+					Switch="-D[value]"
+					Delimited="true"
+					Inheritable="true"
+				/>
+				<EnumProperty
+					Name="Warning"
+					DisplayName="Warning Level"
+					Description="Select how strict you want the compiler to be about checking for potentially suspect constructs.   (/W0 - /W4)"
+					DefaultValue="3"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/W0"
+							DisplayName="Off: Turn Off All Warnings (/W0)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/W1"
+							DisplayName="Level 1 (/W1)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/W2"
+							DisplayName="Level 2 (/W2)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/W3"
+							DisplayName="Level 3 (/W3)"
+						/>
+						<EnumValue
+							Value="4"
+							Switch="/W4"
+							DisplayName="Level 4 (/W4)"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="RuntimeChecks"
+					DisplayName="Basic Runtime Checks"
+					PropertyPageName="Code Generation"
+					Description="Perform basic runtime error checks, incompatible with any optimization type other than debug.   (/RTCs, /RTCu, /RTC1)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch=" "
+							DisplayName="Default"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/RTCs"
+							DisplayName="Stack Frames (/RTCs)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/RTCu"
+							DisplayName="Uninitialized Variables (/RTCu)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/RTC1"
+							DisplayName="Both (/RTC1, equiv. to /RTCsu)"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="Runtime"
+					DisplayName="Runtime Library"
+					PropertyPageName="Code Generation"
+					Description="Specify runtime library for linking.   (/MT, /MTd, /MD, /MDd, /ML, /MLd)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="/MT"
+							DisplayName="Multi-Threaded (/MT)"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="/MTd"
+							DisplayName="Multi-Threaded Debug (/MTd)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="/MD"
+							DisplayName="Multi-Threaded DLL (/MD)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="/MDd"
+							DisplayName="Multi-Threaded Debug DLL (/MDd)"
+						/>
+						<EnumValue
+							Value="4"
+							Switch="/ML"
+							DisplayName="Single-Threaded (/ML)"
+						/>
+						<EnumValue
+							Value="5"
+							Switch="/MLd"
+							DisplayName="Single-Threaded Debug (/MLd)"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="Emulation"
+					DisplayName="Emulation"
+					PropertyPageName="CUDA-Specific"
+					Description="Whether or not to generate emulated code."
+					Switch="-deviceemu"
+				/>
+				<BooleanProperty
+					Name="TypeInfo"
+					DisplayName="Enable Run-Time Type Info"
+					PropertyPageName="Language"
+					Description="Adds code for checking C++ object types at run time (runtime type information). (/GR)"
+					Switch="/GR"
+				/>
+				<BooleanProperty
+					Name="KeepIntermediate"
+					DisplayName="Keep internmediate"
+					Description="Keep internmediate"
+					Switch="-keep"
+				/>
+				<EnumProperty
+					Name="NvccCppSupport"
+					DisplayName="Enable C++ support"
+					PropertyPageName="Code Generation"
+					Category="General"
+					Description="Enable C++ support for CUDA NVCC compiler"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="--host-compilation c"
+							DisplayName="NVCC uses C style"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="--host-compilation c++"
+							DisplayName="NVCC uses C++ style"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="DefineUseCudpp"
+					DisplayName="Enable CUDPP"
+					Description="Enable the use of CUDPP library"
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_CUDPP&quot;"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="DefineUseCufft"
+					DisplayName="Enable CUFFT"
+					Description="Enable use uf CUFFT library"
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_CUFFT&quot;"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="DefineUseOpenGL"
+					DisplayName="Enable OpenGL"
+					Description="Enable OpenGL support"
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_OPENGL&quot;"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="DefineUseDirectX"
+					DisplayName="Enable DirectX"
+					Description="Enable MS DirectX support"
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_DIRECTX&quot;"
+				/>
+				<BooleanProperty
+					Name="DefineUseAllImgFormat"
+					DisplayName="Enable the use of all image format (char, uchar, short, ushort, int, uint, long, float except double) while compiling kernels"
+					Description="Enable the use of all image format (char, uchar, short, ushort, int, uint, long, float except double) while compiling kernels. If disable, only uchar kernels will be compiled, it will be much faster for compiling and debugging!"
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_ALL_IMAGE_FORMAT&quot;"
+				/>
+				<BooleanProperty
+					Name="DefineUseDoubleImgFormat"
+					DisplayName="Enable the use of &apos;double&apos; image format while compiling kernels"
+					Description="Enable the use of &apos;double&apos; while compiling kernels, _GPUCV_CUDA_SUPPORT_ALL_IMAGE_FORMAT must be enabled."
+					Switch="-D &quot;_GPUCV_CUDA_SUPPORT_DOUBLE_IMAGE_FORMAT&quot;"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

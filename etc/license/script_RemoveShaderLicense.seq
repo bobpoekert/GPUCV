@@ -1,0 +1,10 @@
+# sed script to remove license on top of files
+/[/][/]CVG_LicenseBegin/ !b 
+: a
+/CVG_METASHADEREnd/ !{
+  N
+  b a
+}  
+s/[/][/]CVG_LicenseBegin.*CVG_METASHADEREnd//
+#1d
+#---end of sed script---

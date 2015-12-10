@@ -1,0 +1,213 @@
+/*! \page TUTO_CREATE_OP_CUDA Creating a GpuCV operator - using NVIDIA CUDA -
+ * \section TUTO_CREATE_OP_CUDA__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>\ref SETUP_GPUCV_CUDA_PAGE</li>
+	<li>\ref TUTO_CREATE_OP_BASE</li>
+	<li>\ref TUTO_TRANSFER_DATA</li>
+	<li>Base knowledge of NVIDIA CUDA library mechanisms</li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.42 rev 392
+ \note Turorial tag: <b>TUTO_CREATE_OP_CUDA</b>
+ 
+ 
+<br>In this tutorial, we will describe how to create a simple operator using functions supply by GpuCV-CUDA and NVIDIA CUDA library(ex:Add).
+<br><br>Follow the key tag <b>TUTO_CREATE_OP_CUDA</b> in full project source code to have the correspondance of each steps: 
+ <ol>
+	 <li>\ref TUTO_CREATE_OP_CUDA__STP1__LAUNCHER</li>
+	 <li>\ref TUTO_CREATE_OP_CUDA__STP2__WRITE_KERNEL</li>
+</ol>
+
+\par Files to edit
+First, consider all the files that you might open/create and edit with OPER_NAME, your new operator name and OPER_CAT the operator categories that is the corresponding path from the OpenCV documentation:
+<ul>
+	<li>include/GPUCVCuda/OPER_CAT/OPER_NAME.filter.h: this it the kernel code</li>
+	<li>src/GPUCVCuda/OPER_CAT/OPER_NAME.filter.cu: this it the kernel launcher code</li>
+	<li>src/GPUCVCuda/OPER_CAT/OPER_NAME.cpp or a main cpp file, contains some CPP launchers</li>
+</ul>
+\warning 
+All CUDA files must have the following pattern *.filter.* to avoid having multiple object files (from CPP and CU) that share the same name, it would interfer in linking process.
+ 
+
+* \section TUTO_CREATE_OP_CUDA__STP1__LAUNCHER Writing the operator launcher
+\par CUDA specific case
+GpuCV-CUDA supplies some functions to be compliant with OpenCV and GpuCV while hidding most calls to CUDA library. As seen in \ref TUTO_CREATE_OP_BASE__STP2__LAUNCHER, we have to take in charge the data manipulation and the GPU operator call. As CUDA runtime library must be called within C code, we need to have a two level launcher. The classic GpuCV one compile in CPP and the CUDA one that is compiled by CUDA NVCC compiler and must be stored into a .CU file.
+
+\note GpuCV-CUDA CPP launcher will have cv<b>gcu</b> prefixe (ex: cvgcuAdd()) and GpuCV-CUDA C launcher will use <b>gcu</b> prefixe (ex: gcuAdd()) cause they should not be called from an OpenCV application.
+
+\par Classic GpuCV CPP launcher
+\code
+//Key tags:TUTO_CREATE_OP_CUDA__STP1__LAUNCHER_A
+
+//declaration of the CUDA launcher from the .CU file.
+_GPUCV_CUDA_EXPORT_CU void gcuAdd( CvArr* _src1, 
+			 CvArr* _src2,
+			 CvArr* _dst,
+			 CvArr* _mask);
+			 
+
+//declaration of the GpuCV launcher from the .CPP file.
+void cvgCudaAdd( CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask/*=NULL*/)
+{
+	GPUCV_START_OP(cvAdd(src1, src2, dst, mask),	//If native operator is choosed, this function is called
+		"cvgCudaAdd", 				//name of the launcher, it is used for profiling and debugging
+		dst,					//destination image, used for profiling
+		GenericGPU::PROFILE_2);	//Hardware profile to execute the GPU operator
+		
+			//check that input are corrects
+			GCV_OPER_ASSERT(src1, "no input images!");
+			GCV_OPER_ASSERT(src2, "no input images!");
+			GCV_OPER_ASSERT(dst,  "no destination image!");
+			
+			//some other control can be done on image format..
+			//...
+			
+			//call second launcher
+			gcuAdd(src1, src2, dst, mask);//this part of code depend on the implementation choosed
+		
+	GPUCV_STOP_OP(
+		cvAdd(src1, src2, dst, mask),	//in case of error this function is called
+		src1, src2, mask, dst 		//in case of error, we get this images back to CPU, so the opencv operator can be called without memory error
+		);
+}
+\endcode
+
+\par Specific CUDA C launcher
+The required location of input data 
+
+\code
+void gcuAdd(
+			CvArr* src1,
+			CvArr* src2,
+			CvArr* dst,
+			CvArr* mask
+			)
+{
+	//params
+	unsigned int width		= gcuGetWidth(src);
+	unsigned int height		= gcuGetHeight(src);
+	unsigned int channels	= gcuGetnChannels(src);
+	unsigned int depth		= gcuGetGLDepth(src);
+	
+	//Check inputs is done in the cv_cu.cpp file, to manage exceptions
+	//=====================
+	//pre-process data
+	cudaArray * Array_1=NULL;
+	cudaArray * Array_2=NULL;
+	cudaArray * Array_mask=NULL;
+	//prepare source
+	//we choosed to use CUDA array and to bind them to CUDA texture for faster memory access
+		if(src1)
+		{
+			Array_1 = (cudaArray*)gcuPreProcess(
+							src1, 
+							GCU_INPUT, 
+							CU_MEMORYTYPE_ARRAY, 
+							&texA_uchar1.channelDesc
+							);
+			
+			GCU_CUDA_SAFE_CALL (
+				cudaBindTextureToArray (
+						texA_uchar1,
+						Array_1
+						)
+			);
+		}
+			
+		if(src2)
+		{
+			Array_2 = (cudaArray*)gcuPreProcess(src2, GCU_INPUT, CU_MEMORYTYPE_ARRAY, &texB_uchar1.channelDesc);
+			GCU_CUDA_SAFE_CALL (cudaBindTextureToArray (texB_uchar1,Array_2));
+		}
+		if(mask)
+		{
+			Array_Mask = (cudaArray*)gcuPreProcess(mask, GCU_INPUT, CU_MEMORYTYPE_ARRAY, &texMask_uchar1.channelDesc);
+			GCU_CUDA_SAFE_CALL (cudaBindTextureToArray (texMask_uchar1,Array_Mask));
+		}
+	//=====================
+
+	//prepare ouput========
+	//output is always in CUDA_BUFFER
+	uchar1 * d_result = (uchar1 *)gcuPreProcess(dst, GCU_OUTPUT, CU_MEMORYTYPE_DEVICE);
+	//=====================
+
+	//prepare parameters
+	//=================
+		dim3 threads(16,16,1);
+		dim3 blocks = dim3(iDivUp(width,threads.x), iDivUp(height,threads.y), 1);
+		
+		gcudaThreadSynchronize();
+		//call processing operator
+		if(mask)
+			gcudaKernel_AddMask <<<blocks, threads>>> ((uchar1*),width,height,channels);
+		else
+			gcudaKernel_Add <<<blocks, threads>>> ((uchar1*)d_result,width,height,channels);		
+		//========================
+		gcudaThreadSynchronize();
+
+		CUT_CHECK_ERROR("Kernel execution failed");
+
+	//post-process data
+	//clean output
+		gcuPostProcess(dst);
+	//=====================
+
+	//=====================
+	//clean source
+		gcuPostProcess(src1);
+		gcuPostProcess(src2);
+		if(mask)
+			gcuPostProcess(mask);
+}
+\endcode
+\warning We have two function cvgcuAdd() and gcuAdd() that are respectively stored into .cpp and .cu files. Theses files <b>MUST NOT HAVE THE SAME NAME</b> (ex: "my_op.cpp" and "my_op.cu") otherwise the compiler will generate an object file my_op.obj that will dismiss compiling of the second file.
+
+
+* \section TUTO_CREATE_OP_CUDA__STP2__WRITE_KERNEL Writing the operator kernel
+*\note The CUDA kernel is a correspondance of the GLSL shader, but you should have some basic knowledge about CUDA kernel programming before reading this part.
+
+\par Kernel Definition
+\code
+//texture definition
+//file GpuCVCuda/include/kernels/gcu_textures.kernels.h contains lots of texture definition ready to be used.
+texture<char1, 2,	cudaReadModeElementType>	texA_uchar1;
+texture<char1, 2,	cudaReadModeElementType>	texB_uchar1;
+
+__GCU_FCT_GLOBAL void gcudaKernel_Add(
+				 uchar1 * _dst,
+				 unsigned int _width,
+				 unsigned int _height,
+				 unsigned int _channels)
+{
+\endcode
+
+\par Kernel localisation into the grid
+\code
+	GCUDA_KRNL_DBG_FIRST_THREAD("gcudaKernel_Add", int a=0;)
+	const unsigned int iy = __mul24(blockIdx.y,blockDim.y) + threadIdx.y;
+	const unsigned int ix = __mul24(blockIdx.x,blockDim.x) + threadIdx.x;
+	float x = ((float)ix + 0.5f);
+	float y = ((float)iy + 0.5f);
+	unsigned int Pos = (iy*_width + ix)*_channels;
+\endcode
+
+\par Read textures data
+\code
+	uchar1 Val1 = tex2D(texA_uchar1,x, y);
+	uchar1 Val2 = tex2D(texB_uchar1,x, y);
+\endcode	
+	
+\par Write result
+\code	
+	GCUDA_KRNL_DBG(printf("\nPos:%d/%d \tVal1/2:%d + %d\tSum:%d", ix, iy, Val1.x, Val2.x,Val1.x+ Val2.x);)
+	_dst[Pos].x = Val1.x+Val2.x;
+	GCUDA_KRNL_DBG_LAST_THREAD("gcudaKernel_Add", int a=0;)
+}
+\endcode
+
+Now you have written your first GpuCV-CUDA operator, go to section \ref TUTO_TEST_OP to try and benchmark it.
+
+\note As you can see, a quite simple 'addition' filter might require 4 different kernel functions, one for each case. Having to many kernels can become confusing for developpers and users and hard to maintain up to date. The use of template-kernels can reduce significantly the size of the code involved. Have a look to next tutorials \ref TUTO_CREATE_OP_CUDA_ARITHMLOGIC for more details.
+*/

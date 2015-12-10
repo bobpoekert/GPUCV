@@ -1,0 +1,16 @@
+*.user
+*.ncb
+*.svn*
+*CudaVisualProfiler
+*.o
+*obj
+*.obj
+*~*
+*.pdb
+*.suo
+*d.exe
+*d.lib
+*d.dll
+*.exp
+*.idb
+*.ilk

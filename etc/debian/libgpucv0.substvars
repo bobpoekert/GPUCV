@@ -1,0 +1,1 @@
+shlibs:Depends=libgl1-mesa | libgl1, libglu1-mesa | libglu1, libcvaux1, libc6 (>= 2.4), libcv1, libgcc1 (>= 1:4.1.1-21), freeglut3, libgl1-mesa-glx | libgl1, libhighgui1, libstdc++6 (>= 4.2.1-4), libglew1.4 (>= 1.4.0)

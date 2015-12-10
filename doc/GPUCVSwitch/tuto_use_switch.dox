@@ -1,0 +1,126 @@
+/*! \page TUTO_USE_SWITCH Using the auto-switch mechanisms
+ * \section TUTO_USE_SWITCH__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>none</li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v1.0.0 rev 580
+ \note Turorial tag: <b>TUTO_USE_SWITCH_TAG</b>
+ 
+ *
+<br>In this tutorial, we will describe how to use the switch mechanism into an existing application.
+<br><br>Follow the key tag <b>TUTO_USE_SWITCH_TAG*</b> in full project source code to have the correspondance of each steps: 
+ <ol>
+	 <li>\ref TUTO_USE_SWITCH__STP1__PRESENTAION</li>
+	 <li>\ref TUTO_USE_SWITCH__STP2__INTEGRATION</li>
+	 <li>\ref TUTO_USE_SWITCH__STP3__CUSTOMIZATION</li>
+	 <li>\ref TUTO_USE_SWITCH__STP4__BENCHMARKS</li>
+	</li>
+</ol>
+
+\par Files to edit
+First, open/create the corresponding file:
+<ul>
+	<li>your main source files and project files</li>
+</ul>
+
+
+
+* \section TUTO_USE_SWITCH__STP1__PRESENTAION Global idea
+The switch mecanism introduced into GpuCV can be quite handy, but also quite complex to anderstand and manipulate correclty. So let starts from scratch.
+
+* \subsection TUTO_USE_SWITCH__STP1__SUB1_WHAT What is it?
+The switch mecanism acts as a function multiplexer, from one input function call it will select and execute another function among several depending on the context or the input parameters.
+Here is an example:
+<br>Algorithm ALGO-A is supposed to process a set of data, FctA-1 and FctA-2 are two different implementations of this algorithm, they differ from some code optimisations or hardware support. 
+<br>Without a switch, the code would look like:
+\code
+//performing ALGO-A
+if(OPTION_XX)
+	FctA-1(..);
+else
+	FctA-2(..);
+\endcode
+Here goes some questions of interrest:
+<ul>
+<li>What if I call ALGO-A hundreds times in my source code?</li>
+<li>What if I have a new implementation FctA-3 available?</li>
+<li>What if I FctA-2 is not supported by any developper and does not work any more, crashs or return wrong results?</li>
+<li>How to find the best implementation to call?</li>
+</ul>
+
+GpuCV supply a complex switch mecanism design to offer easy solution for developers to all this anoying questions. Here is what your new code might look like:
+\code
+//performing process FctA threw a switch operator
+	FctA-Switch(..);
+\endcode
+Now, what about theses anoying questions:
+
+\par What if I call ALGO-A hundreds times in my source code?
+I can be really easy to redirect function FctA to FctA-Switch, in fact one line is required in the corresponding header file:
+\code
+...
+#define FctA Fct-Switch
+...
+\endcode
+-> No painful code update...
+<br>
+
+\par What if I have a new implementation FctA-3 available?
+The switch mecanism supplies a plugin system to allow as many implementations has required. You just need to provide the DLLs and some meta-data to help the switch to operate correclty.
+<br>
+
+\par What if I FctA-2 is not supported by any developper and does not work any more, crashs or return wrong results?
+The switch mecanism can enable/disable plugins or some functions using an external XML file, so no need to edit your code to control the plugin behavior. In some advanced usage, such as 'non regression testing', you can tell the switch that a given function is not working properly with corresponding set of input parameters so it will not be called again.
+<br>
+
+\par How to find the best implementation to call?
+The current switch mecanism choose the best implementation to call depending on these parameters:
+<ul>
+<li>Implementations available</li>
+<li>Hardware compatibility</li>
+<li>Depending on input parameters:
+	<ul>
+		<li>Implementation performances</li>
+		<li>Implementation compatibility with input parameters</li>
+		<li>Implementation correct processing</li>
+		<li>Possible data tranfer required</li>
+	</ul>
+</ul>
+<br>
+
+* \subsection TUTO_USE_SWITCH__STP1__SUB2_WHY Why do we need to switch between operators?
+Some domains such as GPGPU offers many possibilities to implement a task that will behave differently based on:
+<ul>
+<li>Technology used: OpenGL + Shaders, CUDA, OpenCL...</li>
+<li>Host hardware performances: CPU and GPU family, speed, memory...</li>
+<li>Implementation quality and performances</li>
+<li>Input data properties: size, type, location in RAM or VRAM...</li>
+</ul>
+There are two many parameters and they are varying from years to years so it is not possible to develop an application that will try to handle everythning manually.
+We need a easy-to-use mecanism to manage this complex task for us.
+
+
+
+
+* \section TUTO_USE_SWITCH__STP2__INTEGRATION  Integrate the switch mechanism into an existing application
+* <i>Tag:</i> <b>TUTO_USE_SWITCH_TAG__STP1__INTEGRATION</b><br>
+
+\par headers and libs...
+
+\par source code update (what to avoid)
+
+
+
+* \section TUTO_USE_SWITCH__STP3__CUSTOMIZATION  Customize the switch mechanism
+* <i>Tag:</i> <b>TUTO_USE_SWITCH_TAG__STP2__CUSTOMIZATION</b><br>
+
+
+* \section TUTO_USE_SWITCH__STP4__BENCHMARKS Get performances feedbacks
+* <i>Tag:</i> <b>TUTO_USE_SWITCH_TAG__STP3__BENCHMARKS</b><br>
+
+*/
+
+ 

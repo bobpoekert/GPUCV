@@ -1,0 +1,43 @@
+/*! 
+@defgroup FAQ_GRP All FAQs 
+@{
+	\section FAQ_COMPILE_GRP Compiling FAQs
+	\par FAQ: I got message from compiler: "warning: SugoiTools/config.h: No such file or directory" or "cannot find -lSugoiTools32", what can I do?
+		See section \ref SETUP_GPUCV_SCT__DEPENDENCIES and look for SugoiTools library, it must be located into your workspace directory (same level as gpucv) and named "sugoitools", lowercase is important.
+
+	\par FAQ: I got message from compiler:"warning: cuda_runtime_api.h: No such file or directory" when compiling GPUCVCuda library, what can I do?
+		The compiler can not reach the CUDA files from the toolkit, see section \ref SETUP_GPUCV_SCT__DEPENDENCIES and look for CUDA library setup.
+ 
+
+	\subsection FAQ_COMPILE_CUDA_GRP CUDA compiling FAQs
+			\par FAQ: Compiling GpuCV libraries based on CUDA seems to freeze or takes a lot of time, why?
+				First, you can check that the compiling is still in progress by going to verbose mode with:
+				\code
+				export verbose=1
+				make
+				\endcode
+				You might see that all the CUDA operators are compiling separatly and take some time. Most CUDA operators are based on template to support multiple channels images (1|2|3|4) with multiples input formats (char|uchar|short|ushort|int|uint|float|double...). This makes a lot of different kernels to compile. Some types can be disabled by turning option  _GPUCV_CUDA_SUPPORT_ALL_IMAGE_FORMAT to 0 in "./include/GpuCVCuda/base_kernels/cuda_macro.kernels.cu:l.100". Then you can select manually which format to compile (see lines 117 to 125).
+
+			\par FAQ: I have an ATI/AMD graphics card and the compiling process ask for some cuda files, what is wrong?
+				It seems that the GpuCV project files have been generated using the "--plug-cuda" parameter to enable the CUDA plug-in. See section \ref COMPILE_GPUCV_SCT__CUSTOMIZE to generate new project files without CUDA. Depending on you platform, the command should loook like:
+				\code
+				premake4.exe --os=windows vs2008
+				\endcode
+			
+			\par FAQ: I got message from compiler: "/usr/include/string.h:43: error: inline function ‚ void* memcpy(void*, const void*, size_t)‚ cannot be declared weak", what can I do?
+				You might be compiling GpuCVCuda library with a gcc version not yet supported by CUDA, it happens with GCC 4.4.1 and CUDA 2.3.
+			
+			\par FAQ: I got message from compiler: '/usr/include/bits/stdio2.h(182): error: identifier "__builtin_va_arg_pack" is undefined', what is wrong?
+				This error might be due to an unsupported gcc/g++ version. Rolling back to gcc-4.3, g++-4.3 might solve the problem.
+				Here is a "dirty patch" to fix this issue, setup gcc/g++ 4.3 packages:
+				\code
+				apt-get install cpp-4.3 g++-4.3 g++-4.3-multilib gcc-4.3 gcc-4.3-base gcc-4.3-doc gcc-4.3-multilib gcc-4.3-source gcc-multilib 
+				\endcode
+				And update the current gcc path:
+				\code
+				sudo rm -d /usr/bin/gcc
+				sudo ln -s /usr/bin/gcc-4.3 /usr/bin/gcc
+				\endcode
+	\section FAQ_RUNTIME_GRP Runtime FAQs
+@}
+*/

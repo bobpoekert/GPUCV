@@ -1,0 +1,38 @@
+Source: gpucv
+Priority: extra
+Maintainer: Yannick Allusse <yannick.allusse@it-sudparis.eu>
+Build-Depends: debhelper (>= 5), libglew-dev, freeglut-devel, doxygen, graphviz, opencv-devel, libSugoiTools-dev
+Standards-Version: 3.7.2
+Section: libs
+Description: blahblah
+Version: 0.4.2
+Architecture: any
+
+Package: libgpucv-dev
+Section: libdevel
+Architecture: any
+Depends: libgpucv0 (= ${Source-Version})
+Description: Development headers for libgpucv GpuCV is a Gpu...SDFsdFS..SD.F.SD.gDF.G.
+
+Package: libgpucv0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Development headers for libgpucv
+  GpuCV is a Gpu...SDFsdFS..SD.F.SD.gDF.G.
+
+Package: libgpucv-doc
+Section: doc
+Architecture: all
+Suggests: libgpucv-dev
+Description: Development headers for libgpucv
+  GpuCV is a Gpu...SDFsdFS..SD.F.SD.gDF.G.
+
+Package: libgpucv0-dbg
+Section: libdevel
+Architecture: all
+Depends: libgpucv0 (= ${Source-Version})
+Recommends: libgpucv-dev
+Suggests: libgpucv-doc
+Description: Development headers for libgpucv
+  GpuCV is a Gpu...SDFsdFS..SD.F.SD.gDF.G.

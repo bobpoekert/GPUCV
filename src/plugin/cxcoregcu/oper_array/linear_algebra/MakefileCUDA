@@ -1,0 +1,14 @@
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	gemm.cu\
+			transpose.filter.cu
+
+CCFILES 	:= linear_algebra.cpp
+
+SHARED_LIB_TEMP = cxcoregcu
+NO_LINKING=0
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+

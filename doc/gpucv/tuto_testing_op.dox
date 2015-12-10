@@ -1,0 +1,179 @@
+/*! 
+\page TUTO_TEST_OP Testing and benchmarking a GpuCV operator
+ * \section TUTO_TEST_OP__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+	<ul>
+		<li>\ref TUTO_CREATE_OP_BASE "Creating a GpuCV operator - base concept -"</li>
+		<li>\ref GPUCVCONSOLE_GRP "Using GpuCVConsole application"</li>
+	</ul>
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 310
+ \note Turorial tag: <b>TUTO_TEST_OP_TAG</b>
+ 
+\par
+In this tutorial, we will describe how to test and benchmark a new operator using the GpuCVConsole application.
+<br><br>Follow the key tag <b>TUTO_TEST_OP_TAG*</b> in full project source code to have the correspondance of each steps: 
+<ol>
+	 <li>\ref TUTO_TEST_OP__STP1__RUN_FCT_WRITING</li>
+	 <li>\ref TUTO_TEST_OP__STP2__RUN_FCT_CALL</li>
+</ol>
+
+
+*\section TUTO_TEST_OP__STP1__RUN_FCT_WRITING Write the 'run' function
+\par Goal of the 'run' function:
+A 'run' has to take care of the following steps:
+<ul>
+	 <li>Creating/Releasing destination images/data</li>
+	 <li>Calling OpenCV/IPP/GLSL/CUDA operator implementation</li>
+	 <li>Showing images when required</li>
+	 <li>Convert input data to required type</li>
+</ul>
+Most of them are performed using macros.
+
+
+\par Files to edit
+First, open/create the corresponding file:
+<ul>
+	<li>src/GPUCVConsole/cxcoreg_test.[cpp/h] for a <b>cxcore</b> operator</li>
+	<li>src/GPUCVConsole/cvg_test.[cpp/h] for a <b>cv</b> operator</li>
+	<li>src/GPUCVConsole/cvaux_test.[cpp/h] for a <b>cvaux</b> operator</li>
+	<li>src/GPUCVConsole/highgui_test.[cpp/h] for a <b>highui</b> operator</li>
+	<li>src/GPUCVConsole/custom_test.[cpp/h] for a <b>user custom</b> operator</li>
+</ul>	
+*\note In GpuCV examples, header files are stored in the source folder and not in the include folder cause they do not need to be included by other applications.
+\note We recommand you to create your own test file "YOURNAME_test.cpp" to avoid any conflicts with other operators while your are debugging. When your new operator is stable, you can merge it to corresponding main test file.
+
+\par Function declaration
+* <i>Tag:</i> <b>TUTO_TEST_OP_TAG__STP1_1__DECLARE_TEST_FUNCT</b><br>
+Open the corresponding header file to declare your function. The calling convention is: <b>run</b><i>Opername</i>, ex: runAdd, runSub, runSobel...<br>
+It takes some parameters like one or several input images, some scalar values, options, etc... depending on the original operator parameters. 
+It does not return any values and do not use any destination image pointer.
+\code
+//File: src/GPUCVConsole/cxcoreg_test.h
+//cvAdd takes two input images and an optionnal mask image.
+//CVGXCORE_OPER_ARITHM_LOGIC_COMP_GRP
+	...
+	void runAdd(IplImage * src1,IplImage * src2, IplImage * mask);
+	...
+//CVGXCORE_OPER_STATS_GRP
+	...
+\endcode
+\note Operator declarations are organized by operator categories, please keep them sorted. 
+
+\par Function definition
+The test function must respect some conventions and rules to work correctly in GpuCVConsole:
+<ul>
+	<li>Use macro GPUCV_FUNCNAME to define your current test function name, it is used for debugging.</li>
+	<li>Use macro __CreateImages__ to create destination images with the required image format and channel. 
+		Forth parameter is a switch flag to set which implementations (OpenCV, GLSL, CUDA) have been implemented and/or must be tested. See OperType enum for details.</li>
+	<li>Use macro __CreateWindows__ to create corresponding windows and __ShowImages__ to show final results.</li>
+	<li>Use corresponding macros [_CV_benchLoop|_GPU_benchLoop|_CUDA_benchLoop] to run the corresponding [OpenCV|GLSL|CUDA] operator</li>
+	<li><b>DO NOT FORGOT</b> to release destination images with __ReleaseImages__</li>
+</ul>
+
+
+\par Example of 'runAdd' function:
+* <i>Tag:</i> <b>TUTO_TEST_OP_TAG__STP1_2__WRITE_TEST_FUNCT</b><br>
+Here is an example of 'run' function for the add operator between two images:
+\code
+//File: src/GPUCVConsole/cxcoreg_test.cpp
+void runAdd(IplImage * src1,IplImage * src2, IplImage * mask)
+{
+	GPUCV_FUNCNAME("Add"); 
+	__CreateImages__(cvGetSize(src1) ,src1->depth, src1->nChannels, OperALL);
+	__CreateWindows__();
+	std::string ParamStr=(mask)?"mask":"";
+	
+		_SW_benchLoop	(cvgswAdd(src1,src2, destSW, mask), ParamStr);
+		_CV_benchLoop	(cvAdd(src1,src2, destCV, mask), ParamStr);
+	    _GPU_benchLoop	(cvgAdd(src1,src2, destGLSL, mask),destGLSL , ParamStr);
+		_CUDA_benchLoop	(cvgCudaAdd(src1,src2, destCUDA, mask),destCUDA , ParamStr);
+		
+	__ShowImages__();
+	__ReleaseImages__();
+}
+\endcode
+\sa Macros documentation: GPUCV_FUNCNAME, __CreateImages__/__ReleaseImages__, __CreateWindows__/__ShowImages__, _SW_benchLoop/_CV_benchLoop/_GPU_benchLoop/_CUDA_benchLoop
+
+\warning Macros are expecting some images pointer to be defined in your function scope like <b>src1/src2</b>, you must declare them even if you do not use them:
+\code
+IplImage * src1=NULL;
+IplImage * src2=NULL;
+\endcode
+
+\note Macros __CreateImages__/__ReleaseImages__ are creating/releasing ouput images named:
+\code
+	IplImage * destCV;
+	IplImage * destGLSL;
+	IplImage * destCUDA;
+\endcode
+
+If you are using other input images or matrices, you must load them to GPU using macros _SetInputImage__ or __SetInputMatrix__. It is required only for benchmarks so loading time is not recorded.
+
+
+\par Test function specific cases
+??????????????????????
+
+* \section TUTO_TEST_OP__STP2__RUN_FCT_CALL Calling your new function
+* \par Add the test function to console command parser
+* <i>Tag:</i> <b>TUTO_TEST_OP_TAG__STP2_1__PARSE_FCT_CALL</b><br>
+GpuCVConsole is using a command line/command file parser to execute user commands. You need to add your test function to the parser.
+\code
+//Ex: runAdd
+//File: cxcoreg_test.cpp
+//GlobSrc1,GlobSrc2, GlobMask are global test images managed by the GpuCVConsole application.
+bool cxcoreg_processCommand(std::string & CurCmd, std::string & nextCmd)
+{
+	...
+	//CVGXCORE_OPER_ARITHM_LOGIC_COMP_GRP
+	...
+	else if (CurCmd=="add")	
+		{runAdd(GlobSrc1,GlobSrc2, GlobMask);}
+	...
+}
+\endcode
+\note Use only lowercase names.
+Some operators might need user optional values like cvMul(). In this case it is possible to ask/read a parameter from the command string buffer:
+\code
+//Ex: runAdd
+//File: cxcoreg_test.cpp
+//GlobSrc1,GlobSrc2, GlobMask are global test images managed by the GpuCVConsole application.
+bool cxcoreg_processCommand(std::string & CurCmd, std::string & nextCmd)
+{
+	...
+	//CVGXCORE_OPER_ARITHM_LOGIC_COMP_GRP
+	...
+	else if (CurCmd=="mul")
+	{
+		float coef=0;						//temporary value
+		GPUCV_NOTICE("\nFactor?");			//ask for it
+	 	SGE::GetNextCommand(nextCmd, coef); //read it from the input string(console input or command file)
+		runMul(GlobSrc1,GlobSrc2, coef);	//run the runMul() test function with an additionnal custom value
+	}
+	...
+}
+\endcode
+\sa SGE::GetNextCommand(): it use template parameters so we can read any type of values from the command string.
+
+* \par Add the test function to benchmarking loop
+* <i>Tag:</i> <b>TUTO_TEST_OP_TAG__STP2_2__BENCHMARK</b><br>
+GpuCVConsole application use "runbench" command to perform benchmark on all operators using several images size, from 32x32 to 2048x2048. 
+To benchmark your function, add it to cxcoreg_runAll()/cvg_runAll() functions.
+\code
+//Ex: runAdd
+//File: cxcoreg_test.cpp
+//GlobSrc1,GlobSrc2, GlobMask are global test images managed by the GpuCVConsole application.
+void cxcoreg_runAll(IplImage **src1, IplImage ** src2, IplImage ** mask)
+{
+	...
+	//CVGXCORE_OPER_ARITHM_LOGIC_COMP_GRP
+	...
+		runAdd(&src1,&src2, &mask);
+	...
+}
+\endcode
+
+* \par Test your function
+Now simply call you operator in the console with: <b>"opername [%arg1 %arg2]"</b>.<br>
+You can also call the benchmark loop with:<b>"runbench %loopnbr"</b>.<br>
+*/

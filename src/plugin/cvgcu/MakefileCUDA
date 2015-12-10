@@ -1,0 +1,19 @@
+
+###############################################################################
+# SOURCE VARS
+CUFILES		:=  	 cvgcu_test.cu\
+			 cvgcu_filter.cu
+
+CCFILES 	:= 
+#cvgcu.cpp
+
+
+SRCDIR = ./
+ROOTDIR = ../../../
+SHARED_LIB_TEMP = cvgcu
+NO_LINKING=2
+#local: all
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+
+

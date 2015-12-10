@@ -1,0 +1,14 @@
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	avg.filter.cu\
+			sum.filter.cu
+
+CCFILES 	:= statistics.cpp
+
+SHARED_LIB_TEMP = cxcoregcu
+NO_LINKING=0
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+

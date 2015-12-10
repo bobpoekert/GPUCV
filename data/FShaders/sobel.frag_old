@@ -1,0 +1,75 @@
+//CVG_LicenseBegin==============================================================
+//
+//	Copyright@ GET 2005 (Groupe des Ecoles de Telecom)
+//		http://www.get-telecom.fr/
+//	
+//	This software is a GPU accelerated library for computer-vision. It 
+//	supports an OPENCV-like extensible interface for easily porting OPENCV 
+//	applications.
+//	
+//	Contacts :
+//		patrick.horain@int-evry.fr
+//		gpucv-developers@picolibre.int-evry.fr
+//	
+//	Project's Home Page :
+//		http://picolibre.int-evry.fr/projects/gpucv
+//	
+//	This software is governed by the CeCILL  license under French law and
+//	abiding by the rules of distribution of free software.  You can  use, 
+//	modify and/ or redistribute the software under the terms of the CeCILL
+//	license as circulated by CEA, CNRS and INRIA at the following URL
+//	"http://www.cecill.info". 
+//	
+//================================================================CVG_LicenseEnd
+
+// Filter fragment shader
+//CVG_METASHADERBegin
+#define GETTEX //function to get texture
+#define IMGTYPE //texture type
+//---------------------CVG_METASHADEREnd
+IMGTYPE BaseImage; // source image
+varying vec3  MCPosition_x;// for filter mask positions computation
+varying vec3  MCPosition_y;// for filter mask positions computation
+uniform float Parameters[3];
+
+//varying float LightIntensity;
+
+void main(void)
+{
+	float DeltaX = 1.0/Parameters[0];
+	float DeltaY = 1.0/Parameters[1];
+	float Threshold = Parameters[2];
+
+	vec2 ox = vec2(DeltaX,0.0);
+	vec2 oy = vec2(0.0,DeltaY);
+    
+    // Upper line of the kernel
+	vec2 PP = gl_TexCoord[0].st - oy;
+	float g00 = GETTEX(BaseImage, PP-ox).r;
+	float g01 = GETTEX(BaseImage, PP).r;
+	float g02 = GETTEX(BaseImage, PP+ox).r;
+
+	// Middle line of the kernel
+	PP = gl_TexCoord[0].st;
+	float g10 = GETTEX(BaseImage, PP-ox).r;
+	//float g11 = GETTEX(BaseImage, PP).x; Zero contribution : not necessary
+	float g12 = GETTEX(BaseImage, PP+ox).r;
+
+    // Bottom line of the kernel
+	PP = gl_TexCoord[0].st + oy;
+	float g20 = GETTEX(BaseImage, PP-ox).r;
+	float g21 = GETTEX(BaseImage, PP).r;
+	float g22 = GETTEX(BaseImage, PP+ox).r;
+
+	// Threshold values computation
+	float sx = g20 + g22 - g00 - g02 + 2 * (g21 - g01);
+	float sy = g22 + g02 - g00 - g20 + 2 * (g12 - g10);
+	float dist = (sx*sx + sy*sy);
+	float tsq = Threshold * Threshold;
+	float result = 1;
+	if(dist > tsq)
+	{
+		result = 0;
+	}
+	gl_FragColor = result.xxxx;
+}

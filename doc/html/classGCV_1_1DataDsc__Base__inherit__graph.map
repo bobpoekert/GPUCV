@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" href="$classGCV_1_1DataDsc__CPU.html" title="DataDsc_CPU is the CPU implementation of DataDsc_Base class. It is used to store..." alt="" coords="619,59,757,88"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CUDA__Base.html" title="DataDsc_CUDA_Base is the base class to describe CUDA based data descriptors(DataDsc_Base)..." alt="" coords="596,139,780,168"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__GLBase.html" title="DataDsc_GLBase is the OpenGL base class implementation of DataDsc_Base class." alt="" coords="608,219,768,248"/>
+<area shape="rect" href="$classGCV_1_1CL__Profiler.html" title="Contains main class and macros for profiling/debugging object and functions. Internal..." alt="" coords="207,112,327,141"/>
+<area shape="rect" href="$classGCV_1_1CL__Options.html" title="Supply a Push/Pop mechanism for options parameters." alt="" coords="7,112,129,141"/>
+<area shape="rect" href="$classGCV_1_1TextSize.html" title="GCV::TextSize\&lt; GLsizei \&gt;" alt="" coords="179,165,355,195"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CvMat.html" title="DataDsc_CvMat class describes the CvMat data storage into central memory, it is used..." alt="" coords="849,5,1001,35"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__IplImage.html" title="DataDsc_IplImage class describes the IplImage data storage into central memory, it..." alt="" coords="844,59,1007,88"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CUDA__Array.html" title="DataDsc_CUDA_Array is the base class to describe CUDA array objects." alt="" coords="832,112,1019,141"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CUDA__Buffer.html" title="DataDsc_CUDA_Buffer is the class to describe CUDA device memory objects." alt="" coords="831,165,1020,195"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__GLBuff.html" title="DataDsc_GLBuff class describes the data storage into OpenGL BUFFERS." alt="" coords="848,219,1003,248"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__GLTex.html" title="DataDsc_GLTex is the OpenGL implementation of DataDsc_Base class. It is used to store..." alt="" coords="851,272,1000,301"/>
+</map>

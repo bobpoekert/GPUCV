@@ -1,0 +1,6 @@
+dependencies
+windows-vs*
+macosx-*
+*.exe
+*.dll
+

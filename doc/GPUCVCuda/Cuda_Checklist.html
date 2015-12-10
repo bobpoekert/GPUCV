@@ -1,0 +1,78 @@
+<html>
+<body>
+<title>Writing a GpuCV Cuda Operator : Elementary Steps </title>
+<h1>Writing a GpuCV Cuda Operator : Elementary Steps</h1>
+<h3>Part1 : cpp Launcher</h3>
+<table border="3">
+<tr>
+<td>Check 1. </td>
+<td>Declared the operator in <b>header (.h) file </b> ?</td>
+</tr>
+<tr>
+<td>Check 2. </td>
+<td>Compatible with all formats of inputs and outputs ?</td>
+</tr>
+<tr>
+<td>Check 3. </td>
+<td>Check if input & output images are not NULL pointers ?</td>
+</tr>
+</table>
+
+<h3>Part2 : cu Launcher</h3>
+<table border="3">
+<tr>
+<td>Check 1. </td>
+<td>Included the header file in which kernel is declared ?</td>
+</tr>
+<tr>
+<td>Check 2. </td>
+<td>Written Preprocess and Postprocess functions for all inputs and outputs ?</td>
+</tr>
+<tr>
+<td>Check 3. </td>
+<td>Block Size and Threads dimensions ?</td>
+</tr>
+<tr>
+<td>Check 4. </td>
+<td>Managing Different Image types and Number of Channels?</td>
+</tr>
+</table>
+
+<h3>Part3 : Kernel </h3>
+<table border="3">
+<tr>
+<td>Check 1. </td>
+<td>Source and Destination Indices and types ?</td>
+</tr>
+<tr>
+<td>Check 2. </td>
+<td>Might use template for all channels and types.</td>
+</tr>
+<tr>
+<td>Check 3. </td>
+<td>Memory read and write only in image area !</td>
+</tr>
+</table>
+
+<h3>Part4 : Integrating to the Console Application </h3>
+<table border="3">
+<tr>
+<td>Check 1. </td>
+<td>Compatible Input and output types ?</td>
+</tr>
+<tr>
+<td>Check 2. </td>
+<td>Addition to runAll() function for benchmarking ?</td>
+</tr>
+<tr>
+<td>Check 3. </td>
+<td>Console Command to call the launcher ?</td>
+</tr>
+<tr>
+<td>Check 4. </td>
+<td>Release memory ?</td>
+</tr>
+</table>
+</body>
+</html>
+

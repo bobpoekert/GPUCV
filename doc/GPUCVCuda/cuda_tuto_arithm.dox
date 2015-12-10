@@ -1,0 +1,121 @@
+ /*! \page TUTO_CREATE_OP_CUDA_ARITHMLOGIC Creating an arithmetic/logic operator - using NVIDIA CUDA -
+ * \section CREATING_CUDA_FILTERS_ARITHM_SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+ <li>\ref TUTO_CREATE_OP_BASE</li>
+ <li>\ref TUTO_CREATE_OP_CUDA</li>
+ </ul>
+ \author Yannick Allusse
+ \version GpuCV v0.41 rev 223
+ \note Turorial tag: <b>TUTO_CUDA_ARITHM</b>
+ \sa DECLARE_TPL_ARITHM_OPER_1, DECLARE_TPL_ARITHM_OPER_2, GPUCV_ARITHM_LOGIC_OPER, CudaArithm_SwitchCHANNELS(), CudaArithm_SwitchOPER(), cvgCudaArithm()
+ 
+ 
+ *
+ <br>In this tutorial, we will describe how to create a simple arithmetics and logics operators using templates functions supply by GpuCV-CUDA.
+ Theses templates are used to declare arithmetic and logic operators for any kind of input, output, and channels number. 
+ <br>Follow the key tag <b>TUTO_CUDA_ARITHM</b> in full project source code to have the correspondance of each steps: 
+ <ol>
+	 <li>\ref TUTO_CUDA_ARITHM__STP1__DEFINE_OP</li>
+	 <li>\ref TUTO_CUDA_ARITHM__STP2__DECLARE_OP</li>
+	 <li>\ref TUTO_CUDA_ARITHM__STP3__ADD_ENUM</li>
+	 <li>\ref TUTO_CUDA_ARITHM__STP4__ADD_SWITCH</li>
+	 <li>\ref TUTO_CUDA_ARITHM__STP5__ADD_NAME</li>
+	 <li>\ref TUTO_CUDA_ARITHM__STP6__ADD_CVG_DEFINITION</li>
+	 
+</ol>
+ *
+ <br>
+ 
+* \section TUTO_CUDA_ARITHM__STP1__DEFINE_OP  Defining your operator as a MACRO
+	Define your operator MACRO as following:
+	\code
+		//look for tag TUTO_CUDA_ARITHM__STP1__DEFINE_OP
+		#define _ARITHM_OPER_ADD(A, B) ((A)+(B))
+		//or
+		#define _ARITHM_OPER_SQUARE(A) ((A)*(A))
+	\endcode
+	\note the naming convention is _%[ARITHM|LOGIC]%_OPER_%[OPERATOR_NAME]%. Consider placing all values into brackets.
+ 
+* \section TUTO_CUDA_ARITHM__STP2__DECLARE_OP  Declaring an operator struct
+	To insert your MACRO operator into a CUDA kernel, we will use a template struct. Some macro are available depending on the number of paremeters you defined:
+	<ol>
+		<li>DECLARE_TPL_ARITHM_OPER_1(NAME, OPER)</li>
+		<li>DECLARE_TPL_ARITHM_OPER_2(NAME, OPER)</li>
+	</ol>
+	\code
+		//look for tag TUTO_CUDA_ARITHM__STP2__DECLARE_OP
+		DECLARE_TPL_ARITHM_OPER_1(KERNEL_ARITHM_OPER_SQUARE, _ARITHM_OPER_SQUARE);
+		DECLARE_TPL_ARITHM_OPER_2(KERNEL_ARITHM_OPER_ADD,	 _ARITHM_OPER_ADD);
+	\endcode
+	\note The naming convention is KERNEL_%[ARITHM|LOGIC]%_OPER_%[OPERATOR_NAME]%.
+	\sa DECLARE_TPL_ARITHM_OPER_1, DECLARE_TPL_ARITHM_OPER_2
+
+* \section TUTO_CUDA_ARITHM__STP3__ADD_ENUM  Adding the enum value
+	Your new operator will be identify by an enum value in GPUCV_ARITHM_LOGIC_OPER. This is used to keep the template switch mechanism inside GPUCV-CUDA library, to be sure source code is compiled with NVIDIA CUDA compiler.
+	\code
+		//look for tag TUTO_CUDA_ARITHM__STP3__ADD_ENUM
+		enum GPUCV_ARITHM_LOGIC_OPER{
+			{...}
+			,OPER_ADD
+			{...}
+		};
+	\endcode
+	\note The naming convention is OPER_%[OPERATOR_NAME]%.
+	\sa GPUCV_ARITHM_LOGIC_OPER
+	
+* \section TUTO_CUDA_ARITHM__STP4__ADD_SWITCH  Adding your operator to the switch mechanism
+	You just define and declare some ENUM/MACRO/STRUCTS, now it is time to insert them into the template switch mechanism so they will be applied to kernels.
+	
+	\code
+	//look for tag TUTO_CUDA_ARITHM__STP4__ADD_SWITCH
+	void CudaArithm_SwitchOPER(..)
+	{
+		{...}
+		switch(ArithmOper)
+		{
+			{...}
+			case OPER_ADD://add your new operator ENUM
+				//and call the function CudaArithm_SwitchCHANNELS using you new operator STRUCT as template using all the parameters supplied by CudaArithm_SwitchOPER.
+				CudaArithm_SwitchCHANNELS<KERNEL_ARITHM_OPER_ADD>((IplImage*)_src1, (IplImage*)_src2, (IplImage*)_dst, (IplImage*)_mask, scale);
+				break;
+			{...}
+		}
+		{...}
+	}
+	\endcode
+	\note The naming convention is OPER_%[OPERATOR_NAME]%.
+	\sa CudaArithm_SwitchCHANNELS(), CudaArithm_SwitchOPER()
+	
+* \section TUTO_CUDA_ARITHM__STP5__ADD_NAME Adding your operator name for debug and benchmark
+	GpuCV debuging and benchmarking mechanism is using function names. We recomend you to add your new function name in cvgCudaArithm.	
+	\code
+	//look for tag TUTO_CUDA_ARITHM__STP5__ADD_NAME
+	void cvgCudaArithm(GPUCV_ARITHM_LOGIC_OPER OPERATOR_TYPE, CvArr* src1, CvArr* src2, CvArr* dst, CvArr* mask,  float scale)
+	{
+		{...}
+		std::string TmpFctName;
+		switch(OPERATOR_TYPE)
+		{
+			//KEYTAGS: TUTO_CUDA_ARITHM__STP5__ADD_NAME
+			/*insert your new operator name HERE*/
+			{...}
+			case OPER_ADD:	TmpFctName = "cvgCudaAdd";break;
+			{...}
+		}
+		{...}		
+	}
+	\endcode
+	\note The naming convention is cvgCuda%[OPERATOR_NAME]%.
+	\sa cvgCudaArithm()
+	
+* \section TUTO_CUDA_ARITHM__STP6__ADD_CVG_DEFINITION Adding your operator a cvg** function name
+	Your new operator is ready to be executed. If it has any OpenCV correspondence or you would like to have a direct function to call it. Add a redirection macro as following:
+	\code
+	//look for tag TUTO_CUDA_ARITHM__STP6__ADD_CVG_DEFINITION
+		#define cvgCudaAdd(SRC1,SRC2,DST,MASK) cvgCudaArithm(OPER_ADD,SRC1,SRC2,DST,MASK)
+	\endcode
+	\sa cvgCudaArithm()
+<br><br>
+<b>=> You can now continue the tutorial by following section $TESTING new operator$.</b>
+*/

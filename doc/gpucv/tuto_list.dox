@@ -1,0 +1,41 @@
+/*! 
+\page TUTO_LIST_PAGE "Tutorials"
+
+ * \section TUTO_LIST__FIND_TAGS_SECT Finding key tags in source code
+GpuCV tutorials make references to some source code locations. To make it easier to follow the consecutive steps and read/edit the corresponding code, we placed key tags into the source code. These tags have the following syntax: <b>TUTO_%[NAME]%TAG__STP[%STEP_ID]__%[SHORT_DESCRIPTION]%</b>.
+<br>
+<br>Each tutorial will supply you a main tag name to follow (ex: <b>TUTO_CREATE_OP_BASE_TAG</b> or <b>TUTO_CREATE_OP_GLSL_TAG</b>).
+ * \note Avoid all the results comming from .DOX files, they point you to this documentation.
+
+ * \section TUTO_LIST__SECT Tutorials list
+ \note Tutorials are updated frequently to reflect GpuCV code evolutions. Please send us any documentation remarks and request.
+ <br>
+ <ul>
+	<li>General
+		<ol>
+			<li>\ref TUTO_INTEGRATION_PRJ "Using GpuCV into your project"</li>
+			<li>\ref TUTO_TRANSFER_DATA "Data transfer and manipulation"</li>
+			<li>\ref TUTO_CREATE_OP_BASE "Creating a GpuCV operator - base concept -"</li>
+			<li>\ref TUTO_TEST_OP "Testing and benchmarking a GpuCV operator"</li>
+			<li>\ref TUTO_ADD_LIB "Adding a new project to GpuCV solution"</li>
+			<li>\ref TUTO_USE_SWITCH "Using GpuCV switch"</li>
+			<li>\ref TUTO_CREATE_PLUGIN "Adding a new plugin-project to GpuCV solution"</li>
+			<li>\ref TUTO_PARABUILD "Continues build with ParaBuild"</li>			
+		</ol>
+	</li>
+	<li>OpenGL + GLSL
+		<ol>
+			<li>\ref TUTO_CREATE_OP_GLSL "Creating a GpuCV operator"</li>
+		</ol>
+	</li>
+	<li>NVIDIA CUDA
+		<ol>
+			<li>\ref TUTO_CREATE_OP_CUDA "Creating an operator"</li>
+			<li>\ref TUTO_CREATE_OP_CUDA_ARITHMLOGIC "Creating an arithmetic/logic operator"</li>
+			<li>\ref TUTO_PROFILE_OP_CUDA  "Benchmarking an operator with Cuda Visual profiler"</li>
+			<li>\ref TUTO_OPTIMIZE_OP_CUDA "Optimizing an operator"</li>
+			<li>\ref TUTO_NVIDIA_NSIGHT "Debugging with NVIDIA Parallel Nsight"</li>
+		</ol>
+	</li>
+ </ul>
+*/

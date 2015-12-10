@@ -1,0 +1,16 @@
+
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	laplace.filter.cu\
+			sobel.filter.cu
+
+#CCFILES 	:= cvgcu.cpp
+
+SHARED_LIB_TEMP = cvgcu
+NO_LINKING=0
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+
+

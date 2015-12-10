@@ -1,0 +1,213 @@
+=======================================================================
+=======================================================================
+			GpuCV library:
+
+		Version: GpuCV 0.4.2 rev 355
+
+License: CeCILL-B (http://www.cecill.info/index.en.html)
+
+URL: https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHome
+Contact: gpucv-developers (at) picoforge.int-evry.fr
+=======================================================================
+=======================================================================
+NOTE:
+original HTML version of this file can be found in .doc/html/setup_page.html
+
+
+
+1-Update your system
+===============================================
+1-A Get latest source code
+_______________________________________________
+GpuCV project can be downloaded from here
+https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHomeDownload.
+
+GpuCV latest stable source code and dependencies can be check out from the
+svn respository at:
+        //login: guest
+        //password: guest
+        svn co 
+svn+ssh://guest@picoforge.int-evry.fr/gpucv/experimental/trunk/
+
+
+1-B System requirements
+_______________________________________________
+GpuCV library have some requirement concerning your system, graphics card
+and drivers, please make sure to reach them.
+It is compatible with :
+- Nvidia GPUs with drivers ForceWare 81.85 or later:
+	 -GeForce 8 : Full acceleration, highest performance (currently in test).
+ 	-GeForce 7 & 6: Full acceleration, good performance.
+	 -GeForce 5900: Some hardware features are not available, but some
+acceleration can still be achieved.
+	 -GeForce 4xxx and 3xxx: Few hardware features are available, little
+acceleration can be achieved.
+	 -Older GPUs: Not supported.
+-ATI GPUs with drivers Catalyst 5.10 or later:
+	 -FireGL3100: Most features are compatibles.
+	 -Higher end FireGL series, Radeon 1xxx and 2xxx series should have
+better compatibility, but have not been tested yet.
+	 -Radeon Xxxx and 9xxx: Almost all the features should be compatibles.
+Not tested yet.
+	 -Radeon 8xxx: Not supported yet.
+	 -Older GPUs: Not supported.
+-OpenCV:
+	 -Beta 5.
+	 -v1.0 (partially included into GpuCV releases).
+
+ => Make sure to have latest drivers for your graphics card and mother board.
+
+1-C Dependencies
+_______________________________________________
+GPUCV is using numerous libraries to link and run such as:
+- OpenCV (v1.0, October 18, 2006).  Package - (OpenCV,OpenCV-devel)
+- OpenGL
+- GLUT  	Package - (freeglut,freeglut-devel)
+- GLU 		Package - (freeglut-devel)
+- GLEW 		Package - (glew,glew-devel or libglew, libglew-devel)
+- SugoiTools	(Included into the tar-gz file)
+- (OPT) NVIDIA CUDA. See Setup GpuCV with CUDA. for more details.
+
+
+*For windows users:
+ To get an environment ready to compile GpuCV quickly, we supply 'as is'
+an archive containing headers files, DLL and LIB files for MS Windows to
+use with MS Visual C++ 2003 or 2005. More informations about this
+depencies package can be found in section "dependencies package".Make sure ./GpuCV and
+./resources are in the same root folder.
+
+
+1-D Application and tools
+_______________________________________________
+Some tools might be required to compile and run GpuCV:
+- Premake, to generate projects and Makefiles (Premake - Premake is a
+build script generator)
+- A compiler chain:
+ 	- For windows: MS Visual 6/2003/2005/2008
+	- For Linux: make and gcc
+- (OPT)Doxygen, to generate documentation
+- (OPT)Subversion, to get latest code
+- (OPT)Shader Designer, to create and debug GLSL shader outside of GpuCV
+- (OPT)glslDevil, to debug GLSL shader inside GpuCV
+- (OPT)gDebugger, to debug OpenGL inside GpuCV
+
+
+2-Customize GpuCV
+===============================================
+GpuCV can support external libraries such as NVIDIA CUDA, CUDPP, CUFFT...
+and have some internal options that can be customized before compiling.
+
+2-A Customize project properties
+_______________________________________________
+GpuCV is using a LUA scripts to describe projects properties (includes,
+libs, preprocessor commands...) and Premake tools to generate projects
+files for different targets such as MS VS6, VS2003, VS2005, VS2008 and GNU
+makefiles. This procedure is performed in two steps:
+
+->1. (OPT)Customize gpucv/createSolutions.bat or gpucv/createSolutions.sh script
+to suit your needs. Options available are:
+ '--target [vs6|vs2003|vs2005|gnu': target development platform.
+ '--os [windows|linux]': target OS.
+ '--cuda': enable the use of GpuCV-CUDA. 
+	GpuCV-CUDA is not yet stable under LINUX.
+	Advanced options are availables such as:
+	 '--cuda-toolkit-path s': Path of CUDA toolkit.
+	 '--cuda-SDK-path s': Path of CUDA SDK.
+	 '--use-cudpp': GpuCV-CUDA library will be compiled with CUDPP support.
+
+Depending on your settings, you might found several
+solutions in folder './GpuCV/projects/' such as
+VS6/VS2003/VS2005/VS2008 or some Makefiles.
+
+2-B Customize project internel settings
+_______________________________________________
+The file ./GpuCV/include/definition.h contains global definition that are
+used in the project. Consult documentation to get more
+informations.
+
+
+3-Compile
+===============================================
+-Build order is :
+- GPUCVHardware.
+- GPUCVTexture.
+- GPUCVCore.
+- GPUCV.
+- GPUCVConsole.
+
+3-A Under Microsoft Windows
+_______________________________________________
+-NOTE: you can use the dependencies pacakage available online on the download page:
+https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHomeDownload
+
+- execute:
+	./gpucv/CreateSolutions.bat
+	
+
+- compile using the solution file corresponding to your interface of development:
+	-'./gpucv/projects/$TARGET$'/GpuCV-$TARGET.sln'
+
+-Set the project GPUCVConsole as 'Start Up Project'.
+-Open GPUCVConsole properties window and set the 'Working Directory' from
+'Debugging' as your local directory, ex: '%INSTALL_PATH%\gpucv\bin'.
+
+NOTE: if sugoitools generate some errors, see how to recompile it under windows:
+https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHomeDownloadResources
+
+
+3-B Under Linux
+_______________________________________________
+- Go into ./gpucv/
+- In .bashrc file, export library path using absolute path :
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/LOGIN/workdir/gpucv/lib/gnu:/home/LOGIN/workdir/sugoitools/lib/gnu/
+- Compile Sugoitools first:
+	cd sugoitools
+	sh ./CreateSugoiProjects.bat
+	export CONFIG=Debug
+	make
+	export CONFIG=Release
+	make
+	cd ..
+
+- Compile GpuCV:
+	cd gpucv
+	./CreateSolutions.sh
+	export CONFIG=Debug
+	make
+	export CONFIG=Release
+	make
+
+
+4- Generate documentation
+===============================================
+Local project documentation can be generated with doxygen:
+cd ./gpucv/doc
+doxygen GpuCv.doxy
+
+Ouput HTML documentation can be foud in ./gpucv/doc/html/:
+Firefox html/index.html
+
+
+5- Test your system
+===============================================
+GpuCV supply an application to test and benchmark all operators: GPUCVConsole
+It can be run using the script ./gpucv/bin/GPUCVConsole_start.sh
+See ./gpucv/doc/html/example_list_page.html to have full documentation of all example applications.
+
+
+5-A Test an operator
+_______________________________________________
+In this console application, you can test operators by typing their name. 
+Enter 'h' to have a full list of operator available.
+Example: test the cvAdd() operator
+type "add"
+You will see resulting images.
+
+
+5-B Benchmark all operators
+_______________________________________________
+If you want to benchmark all operators, type "bench 10" to run the benchmark 10 times.
+Benchmarks will be saved into ./gpucv/bin/benchmark.html
+note: running benchmarks can take several minutes.
+
+

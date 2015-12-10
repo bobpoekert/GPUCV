@@ -1,0 +1,36 @@
+#maximum of 4 parameters allowed
+	timestamp
+#---------
+#This option tells the profiler to log timestamps before kernel
+#launches and memory operations so the user can do timeline analysis.
+
+    gld_incoherent    
+    gld_coherent      
+    gst_incoherent    
+    gst_coherent      
+#--------------
+#These options tell the profiler to record information about whether global
+#memory loads/stores are coalesced (coherent) or non-coalesced (incoherent). 
+#    local_load         
+#    local_store       
+#-----------
+#These options are used to record the number of local loads/stores 
+#that take place during kernel execution.
+#	branch            
+#	divergent_branch
+#----------------
+#These options tell the profiler to record the number of total branches
+#and divergent branches taken by threads executing a kernel.
+  
+#    instructions 
+#------------
+#This options records the instruction count for a given kernel.
+     
+#    warp_serialize 
+#--------------
+#This options records the number of thread warps that serialize on address
+#conflicts to either shared or constant memory.
+   
+#    cta_launched 
+#------------
+#This option records the number of executed thread blocks.    

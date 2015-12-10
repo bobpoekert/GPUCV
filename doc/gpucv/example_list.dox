@@ -1,0 +1,55 @@
+/*! \page EXAMPLE_LIST_PAGE "Running sample applications"
+
+ * \section EXAMPLE_LIST_SECT_INTRO Before running any GpuCV application
+In order to get them working you might need to update your library path settings, there are several cases:
+
+<ul>
+<li>The Windows binary packages -> No need to export the PATH, the required DLLs are included into the package distribution.</li>
+<li>The Windows source packages -> You need to export the PATH based on your system settings. It mights look like:
+\code
+rem Run in GpuCV folder:
+set ARCH=64
+rem or
+set ARCH=32
+
+rem choose mode between "Release" and "Debug"
+set MODE=Release
+
+rem export GpuCV paths:
+set PATH=%PATH%;%CD%\lib\windows-vs2008\x%ARCH%\%MODE%;%CD%\dependencies\SugoiTools\lib\windows-vs2008\x%ARCH%\%MODE%
+set PATH=%PATH%;%CD%\dependencies\SugoiTools\dependencies\bin\x%ARCH%;
+
+rem export OPENCV paths:
+set PATH=%PATH%;%OPENCV_PATH%\bin\;%OPENCV_PATH%\bin\Release;
+
+rem export CUDA paths:
+set PATH=%PATH%;%CUDA_BIN_PATH%;%NVSDKCOMPUTE_ROOT%\C\bin\win%ARCH%\Release\;
+\endcode
+</li>
+ 
+<li>The Linux source packages -> You need to export the LI_LIBRARY_PATH based on your system settings. It mights look like: 
+\code
+rem Run in GpuCV folder:
+export ARCH=64
+rem or
+export ARCH=32
+
+rem choose mode between "Release" and "Debug"
+export MODE=Release
+
+rem export GpuCV paths:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/lib/linux-gmake/x$ARCH/$MODE:$(pwd)/dependencies/SugoiTools/lib/linux-gmake/x$ARCH/$MODE
+
+rem export CUDA paths [OPTIONAL]:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_LIB_PATH/../lib64/:$CUDA_LIB_PATH/../lib/
+\endcode
+
+Then go to gpucv lib folder:"./gpucv/lib/__OS__-__TARGET__)/$ARCH/$MODE" path and run the examples. 
+
+ * \section EXAMPLE_LIST_SECT_LIST List of GpuCV examples
+  <ol>
+	 <li>\ref GPUCVCONSOLE_GRP</li>
+	 <li>\ref GPUCV_CAMDEMO_GRP</li>
+	 <li>\ref GPUCV_SIMPLEAPP_GRP</li>
+ </ol>
+*/ 

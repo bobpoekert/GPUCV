@@ -1,0 +1,208 @@
+/*! 
+\page TUTO_TRANSFER_DATA Transfering data
+ * \section TUTO_CREATE_OP_BASE__SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ NONE.
+ \sa DataDsc_Base, DataDsc_GLTex, DataDsc_GLBuff, DataDsc_CPU, DataDsc_IplImage, DataDsc_CvMat, DataDsc_CUDA_Array, DataDsc_CUDA_Buffer
+ \author Yannick Allusse
+ \version GpuCV v0.41 rev 233
+ \note Turorial tag: <b>TUTO_TRANSFER_DATA</b>
+ 
+\par
+In this tutorial, we will describe how to transfer data between different locations(central memory, graphics memory) and different types (IplImage, CvMat, OpenGL textures, OpenGL Buffers...).
+<br><br>Follow the key tag <b>TUTO_TRANSFER_DATA</b> in full project source code to have the correspondance of each steps: 
+<ol>
+	 <li>\ref TUTO_TRANSFER_DATA__STP1__DATA_LOCATION_ISSUE</li>
+	 <li>\ref TUTO_TRANSFER_DATA__STP2__MECHANISM</li>
+	 <li>\ref TUTO_TRANSFER_DATA__STP3__DATA_DSC_USAGE</li>
+	 <li>\ref TUTO_TRANSFER_DATA__STP4__DATA_DSC_OPTIONS</li>
+	 <li>\ref TUTO_TRANSFER_DATA__STP5__DEBUGGING</li>
+</ol>
+
+
+*\section TUTO_TRANSFER_DATA__STP1__DATA_LOCATION_ISSUE The data location issue
+GpuCV is using your computer graphics card to perform image and data processing. This means that the library needs to have a local copy of all the data to be processed in video memory, sometime resulting in having 2 instances or more of the same data in different memories:
+<ul>
+<li>in central memory for CPU processing (example: of IplImage and CvMat),</li>
+<br>or/and
+<li>in graphics memory for GPU processing (example: OpenGL texture or buffer, CUDA buffer or array...).</li>
+</ul>
+<br>GpuCV uses CvgArr object as a container for CvArr structure and image data. 
+When a GpuCV function is called, the library checks in which location(s) the image data are available and transfers the image data where they are required.
+Holding two instances of data can imply data inconsistency and synchronization issues, due to the fact that OpenCV is not aware of GpuCV, and GpuCV does not know whether resulting image(s) will be input to some other GpuCV operators or to a native OpenCV operator.
+To avoid this situations, GpuCV has several mechanisms that we present below.
+
+\par The GpuCV approach
+For OpenCV compatibility purpose, the default behavior of GpuCV operators is to transfer results back to central memory. 
+This guaranties that the result will be a valid OpenCV CvArr. 
+Then data in graphics memory are released to avoid duplicates. 
+This has a cost of loading the graphics port (AGP, PCI-Express...) and a time penalty.
+
+\par Holding CvArr on GPU's memory
+In case a GpuCV image result is not used by any native OpenCV operator but only by GpuCV operators, this transfer is useless. 
+It can be enabled/disable with functions cvgSetOptions(MY_IMAGE..., DataContainer::CPU_RETURN, true/false).
+
+\warning Disabling cpu return options, to a native OpenCV operator will result in an *????????????????*empty buffer error.
+
+\par Allowing duplicates data
+At some point, you may wish to keep data both in central and graphics memory. 
+This may be useful when an image will be used as a read only image by both GpuCV and OpenCV operators. 
+To avoid unnecessary data transfer you can set the UBIQUITY flag by calling cvgSetOptions(MY_IMAGE..., DataContainer::UBIQUITY, true/false).
+
+\warning To preserve data consistency between duplicates, application developers should disable UBIQUITY flag before changing image data on CPU. 
+
+*\section TUTO_TRANSFER_DATA__STP2__MECHANISM GpuCV data managment
+GpuCV framework has been designed to manage any kind of data, in any locations and allows user custom data. It is done by a "Data Container" <-> "Data Descriptor" connections.
+
+
+\subsection TUTO_TRANSFER_DATA__STP2__SUB1_MECHANISM_CONTAINER Data container
+A data container is associated with any OpenCV native objects (ex: IplImage, CvMat) and placed into a manager (TextureManager).
+Theses containers contains one or several data descriptors (DataDsc_Base or unherited class like DataDsc_GLTex or DataDsc_IplImage) and supply functions to manage them. 
+They are also used to store options about the native object and how to manipulate them efficiently.
+
+\subsection TUTO_TRANSFER_DATA__STP2__SUB2_MECHANISM_DSC Data descriptors
+A data descriptor associates data to a kind of location (ex: central memory or graphics memory) or format (ex: image, matrices...). 
+It contains a precise description of data (type, size, channel number,format, memory used...) and how to copy them to other data descriptors of other kind.
+
+\par Available data descriptors
+All the data descriptors currently available are (organized by unheritence): 
+<ul>
+	<li>DataDsc_Base:
+		<ul>
+			<li>DataDsc_CPU:
+				<ul>
+					<li>DataDsc_IplImage</li>
+					<li>DataDsc_CvMat</li>
+				</ul>
+			</li>
+			<li>DataDsc_GLTex</li>
+			<li>DataDsc_GLBuff</li>
+			<li>DataDsc_CUDA_Base:
+				<ul>
+					<li>DataDsc_CUDA_Array</li>
+					<li>DataDsc_CUDA_Buffer</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+
+\par Interactions between descriptors
+They use generic functions to communicate and tansfer data/parameters to each other. Here is a list of the main functions involved into this process:
+
+<ul>
+	<li>DataDsc_Base::TransferFormatFrom(): convert and copy data parameters (type, format, channles...) from the source object to destination using conversion functions: DataDsc_Base::ConvertPixelFormat_GLToLocal(), DataDsc_Base::ConvertPixelFormat_LocalToGL(), DataDsc_Base::ConvertPixelType_GLToLocal(), DataDsc_Base::ConvertPixelType_LocalToGL()<br></li>
+	<li>DataDsc_Base::CopyFrom(): copy data from a source object to current object<br></li>
+	<li>DataDsc_Base::CopyTo(): copy data from local object to a destination object<br></li>
+<br>	
+</ul>
+<br>GpuCV owns several data descriptors, and allow the use of many more. This is due to the function CopyFrom()/CopyTo() that are reimplemented into each object to allow transfer from/to previous type. 
+<br><br>Here is a non exaustive list of possible communications:
+<ul>
+<li>DataDsc_Base don't own or transfer any data.</li>
+<li>DataDsc_CPU can only tranfer data to/from DataDsc_CPU: it is one of the base type.</li>
+<li>DataDsc_GLTex and DataDsc_GLBuff can tranfer data to/from DataDsc_CPU / DataDsc_GLTex / DataDsc_GLBuff: OpenGL knows how to access central memory and graphics memory.</li>
+<li>DataDsc_CUDA_Array can tranfer data to/from DataDsc_CPU / DataDsc_GLBuff / DataDsc_CUDA_Buffer: CUDA knows how to access central memory and OpenGL buffers.</li>
+<li>DataDsc_CUDA_Buffer can tranfer data to/from DataDsc_CPU / DataDsc_CUDA_Array: CUDA knows how to access central memory and CUDA memory but can't access OpenGL memory.</li>
+</ul>
+\note Every new data descriptors created must know how to transfer its data to/from at least one other existing (internaly in OpenCV) data descriptor object.
+\note Several transfers might be required to transfer from one object to another (ex: transfer between DataDsc_GLTex and DataDsc_CUDA_Array requires to go threw DataDsc_GLBuff).
+
+
+\section TUTO_TRANSFER_DATA__STP3__DATA_DSC_USAGE Usage
+GpuCV users and developers can control the data locations and copy at different levels. From an OpenCV applications using cvg* functions or from operators using direct call to data container class (DataContainer / CvgArr).
+
+\subsection TUTO_TRANSFER_DATA__STP3__DATA_DSC_USAGE_CVG Data transfer in an OpenCV application
+When developing an OpenCV application, data transfer and management is automaticaly managed by the library. Therefore, we supply some function to help you manage specific cases. 
+<br><br>
+Here is a brief list and description of functions available, please refer to references manual for more details:
+<br>
+<ul>
+<li>cvgSynchronize(CvArr*):
+	<br>Makes sure the given CvArr is on central memory.
+<br>
+</li>
+<li>cvgSetLocation<TPL_DTATA_DSC>(CvArr*, bool):
+	<br>Attempts to copy of the CvArr to the location given by TPL_DTATA_DSC.
+<br>
+</li>
+<li>cvgSetDataFlag<TPL_DTATA_DSC>(CvArr* src, bool _dataFlag, bool _forceUniqueData):
+	<br>Changes the data flag of the destination location to _dataFlag, other locations may be affected.
+<br>
+</li>
+</ul>
+\par Example 1: load image into an OpenGL texture
+We want to load an image from a file and transfer it into an OpenGL texture:
+\code
+	IplImage * tempImg = cvLoadImage("imgTest.jpg",1);
+	if(tempImg)
+	{	//ask a transfer to GPU
+		//DataDsc_GLTexture is used as a template parameter to the function, it specify the destination
+		//data flag is true so we allocate memory and transfer data
+		cvgSetLocation<DataDsc_GLTex>(tempImg, true);
+	}
+	else
+	{
+		GPUCV_ERROR("Error loading image " << "imgTest.jpg" << ", the file may not exist...");
+}
+\endcode
+
+\par Example 2: allocate an OpenGL texture
+We want to allocate video memory so we will be able to write into it later:
+\code
+	CvSize size={512, 512};
+	IplImage * tempImg = cvgCreateImage(size, CV_8U, 3);//create a 3 uchar channels images on CPU
+	if(tempImg)
+	{	//ask to allocate on GPU
+		//DataDsc_GLTexture is used as a template parameter to the function, it specify the destination
+		//data flag is false so we only allocate memory and do not transfer data
+		//tempImg might be used as a destination image later.
+		cvgSetLocation<DataDsc_GLTex>(tempImg, false);
+	}
+	else
+	{
+		GPUCV_ERROR("Error creating image");
+	}
+\endcode
+
+\par Example 3: use of CPU_RETURN option
+
+\par Example 3: use of UBIQUITY option
+
+\subsection TUTO_TRANSFER_DATA__STP3__DATA_DSC_USAGE_CLASS Data transfer in a GpuCV operator
+The class DataContainer and its unherited class (CvgArr) offers more powerful control of data location and transfer.
+\warning Member functions from DataDsc_base and its unherited class should not be used directly unless you know what you are doing. You should always use DataContainer members.
+<br><br>
+Here is a brief list and description of functions available, please refer to references manual for more details:
+<br>
+<ul>
+<li>DataContainer::SetLocation<TPL_DTATA_DSC>(bool):
+	<br>This function will attempt to make a copy of the CvArr to the location given by TPL_DTATA_DSC.
+<br>
+</li>
+<li>DataContainer::SetDataFlag<TPL_DTATA_DSC>(bool _dataFlag, bool _forceUniqueData):
+	<br>This function changes the data flag of the destination location to _dataFlag, other locations may be affected.
+<br>
+</li>
+<li>DataContainer::GetDataDsc<TPL_DTATA_DSC>():
+	<br>This function return the corresponding data descriptor TPL_DTATA_DSC, it creates it if required.
+<br>
+</li>
+<li>DataContainer::RemoveDataDsc<TPL_DTATA_DSC>():
+	<br>This function remove and free the corresponding data descriptor TPL_DTATA_DSC.
+</li>
+<br>
+<li>DataContainer::RemoveAllDataDscExcept<TPL_DTATA_DSC>():
+	<br>This function remove and free all data descriptors except the one specified by TPL_DTATA_DSC.
+<br>
+</li>
+<li>DataContainer::SwitchDataDsc<TPL_DTATA_DSC>(DataContainer*):
+	<br>This function switch the corresponding data descriptor TPL_DTATA_DSC between two data containers.
+</li>
+</ul>
+
+
+
+\section TUTO_TRANSFER_DATA__STP4__DATA_DSC_OPTIONS Options
+
+\section TUTO_TRANSFER_DATA__STP5__DEBUGGING Debugging transfers
+*/

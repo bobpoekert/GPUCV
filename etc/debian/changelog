@@ -1,0 +1,6 @@
+gpucv (0.4.2-r330) beta; urgency=low
+
+  * Initial release
+   Partial change log can be found online at "https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebReleaseNote"
+   Full change log can be found online at "http://picoforge.int-evry.fr/websvn/log.php?repname=gpucv&path=%2F&rev=0&sc=1&isdir=1"
+ -- Yannick Allusse <yannick.allusse@laposte.net>  Sat,  4 Mar 2008 12:06:25 +0100

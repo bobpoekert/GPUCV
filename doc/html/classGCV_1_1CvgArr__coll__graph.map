@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" href="$classGCV_1_1DataContainer.html" title="Most important class, it is used to manipulate texture properties and data. DataContainer..." alt="" coords="25,293,164,323"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__Base.html" title="DataDsc_Base is the base class to describe a kind of data associated with its location..." alt="" coords="267,412,411,441"/>
+<area shape="rect" href="$classGCV_1_1CL__Profiler.html" title="Contains main class and macros for profiling/debugging object and functions. Internal..." alt="" coords="223,197,343,227"/>
+<area shape="rect" href="$classGCV_1_1CL__Options.html" title="Supply a Push/Pop mechanism for options parameters." alt="" coords="49,101,172,131"/>
+<area shape="rect" title="STL class." alt="" coords="279,101,359,131"/>
+<area shape="rect" title="STL class." alt="" coords="237,5,403,35"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CPU.html" title="DataDsc_CPU is the CPU implementation of DataDsc_Base class. It is used to store..." alt="" coords="269,496,408,525"/>
+<area shape="rect" href="$classGCV_1_1TextSize.html" title="GCV::TextSize\&lt; GLsizei \&gt;" alt="" coords="188,293,364,323"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__CvMat.html" title="DataDsc_CvMat class describes the CvMat data storage into central memory, it is used..." alt="" coords="275,576,427,605"/>
+<area shape="rect" href="$classGCV_1_1DataDsc__IplImage.html" title="DataDsc_IplImage class describes the IplImage data storage into central memory, it..." alt="" coords="88,576,251,605"/>
+</map>

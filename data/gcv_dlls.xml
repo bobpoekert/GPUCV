@@ -1,0 +1,77 @@
+<?xml version="1.0" standalone="no" ?>
+<dllMngr>
+	<dll id="cv" prefix="cv" enabled="1" debug="">
+		<dllfiles>
+			<dllfile release="cv210.dll" arch="" version="210" os="windows"/>
+			<dllfile release="cv200.dll" arch="" version="200" os="windows"/>
+			<dllfile release="cv110.dll" arch="" version="110" os="windows"/>			
+			<dllfile release="libcv.so" arch="" version="" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="cvg" prefix="cvg" enabled="1" debug="cvgd">
+		<dllfiles>
+			<dllfile release="cvg32.dll" debug="cvg32D.dll" arch="x32" os="windows"/>
+			<dllfile release="cvg64.dll" debug="cvg64D.dll" arch="x64" os="windows"/>
+			<dllfile release="libcvg32.so" debug="libcvg32D.so" arch="x32" version="" os="linux"/>
+			<dllfile release="libcvg64.so" debug="libcvg64D.so" arch="x64" version="" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="cvgcu" prefix="cvgCuda" enabled="1" debug="cvgcud" >
+		<dllfiles>
+			<dllfile release="cvgcu32.dll" debug="cvgcu32D.dll" arch="x32" os="windows" depends="nvcuda.dll"/>
+			<dllfile release="cvgcu64.dll" debug="cvgcu64D.dll" arch="x64" os="windows" depends="nvcuda.dll"/>
+			<dllfile release="libcvgcu32.so" debug="libcvgcu32D.so" arch="x32" os="linux" depends="libcuda.so"/>
+			<dllfile release="libcvgcu64.so" debug="libcvgcu64D.so" arch="x64" os="linux" depends="libcuda.so"/>
+		</dllfiles>
+	</dll>
+	<dll id="cxcore" prefix="cv" enabled="1" debug="" >
+		<dllfiles>
+			<dllfile release="cxcore210.dll" arch="" version="210" os="windows"/>
+			<dllfile release="cxcore200.dll" arch="" version="200" os="windows"/>
+			<dllfile release="cxcore110.dll" arch="" version="110" os="windows"/>
+			<dllfile release="libcxcore.2.1.0.so" arch="" version="210" os="linux"/>
+			<dllfile release="libcxcore.2.0.0.so" arch="" version="200" os="linux"/>
+			<dllfile release="libcxcore.1.1.0.so" arch="" version="110" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="cxcoreg" prefix="cvg" enabled="1" debug="cxcoregd" >
+		<dllfiles>
+			<dllfile release="cxcoreg32.dll" debug="cxcoreg32D.dll" arch="x32" os="windows"/>
+			<dllfile release="cxcoreg64.dll" debug="cxcoreg64D.dll" arch="x64" os="windows"/>
+			<dllfile release="libcxcoreg32.so" debug="libcxcoreg32D.so" arch="x32" version="" os="linux"/>
+			<dllfile release="libcxcoreg64.so" debug="libcxcoreg64D.so" arch="x64" version="" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="cxcoregcu" prefix="cvgCuda" enabled="1" debug="cxcoregcud" >
+		<dllfiles>
+			<dllfile release="cxcoregcu32.dll" debug="cxcoregcu32D.dll" arch="x32" os="windows" depends="nvcuda.dll"/>
+			<dllfile release="cxcoregcu64.dll" debug="cxcoregcu64D.dll" arch="x64" os="windows" depends="nvcuda.dll"/>
+			<dllfile release="libcxcoregcu32.so" debug="libcxcoregcu32D.so" arch="x32" os="linux" depends="libcuda.so"/>
+			<dllfile release="libcxcoregcu64.so" debug="libcxcoregcu64D.so" arch="x64" os="linux" depends="libcuda.so"/>
+		</dllfiles>
+	</dll>
+	<dll id="highgui" prefix="cv" enabled="1" debug="" >
+		<dllfiles>
+			<dllfile release="highgui210.dll" arch="" version="210" os="windows"/>
+			<dllfile release="highgui200.dll" arch="" version="200" os="windows"/>
+			<dllfile release="highgui110.dll" arch="" version="110" os="windows"/>
+			<dllfile release="libhighgui.so" arch="" version="" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="highguig" prefix="cvg" enabled="1" debug="highguigd" >
+		<dllfiles>
+			<dllfile release="highguig32.dll" debug="highguig32D.dll" arch="x32" os="windows"/>
+			<dllfile release="highguig64.dll" debug="highguig64D.dll" arch="x64" os="windows"/>
+			<dllfile release="libhighguig32.so" debug="libhighguig32D.so" arch="x32" os="linux"/>
+			<dllfile release="libhighguig64.so" debug="libhighguig64D.so" arch="x64" os="linux"/>
+		</dllfiles>
+	</dll>
+	<dll id="gcvnpp" prefix="cvgNpp" enabled="1">
+		<dllfiles>
+			<dllfile release="gcvnpp32.dll" debug="gcvnpp32D.dll" arch="x32" os="windows" depends="nvcuda.dll,npp32_31_9.dll"/>
+			<dllfile release="gcvnpp64.dll" debug="gcvnpp64D.dll" arch="x64" os="windows" depends="nvcuda.dll,npp64_31_9.dll"/>
+			<dllfile release="libgcvnpp32.so" debug="libgcvnpp32D.so" arch="x32" os="linux"  depends="libcuda.so,libnpp32_31_9.so"/>
+			<dllfile release="libgcvnpp64.so" debug="libgcvnpp64D.so" arch="x64" os="linux"  depends="libcuda.so,libnpp64_31_9.so"/>
+		</dllfiles>
+	</dll>
+</dllMngr>

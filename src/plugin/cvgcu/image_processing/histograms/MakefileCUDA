@@ -1,0 +1,14 @@
+
+###############################################################################
+# SOURCE VARS
+CUFILES		=  	histo.filter.cu
+#CCFILES 	:= cvgcu.cpp
+
+SHARED_LIB_TEMP = cvgcu
+NO_LINKING=O
+SRCDIR = ./
+ROOTDIR = ../../../../../
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+
+

@@ -1,0 +1,50 @@
+/*! \page TOOLS_PAGE External tools to use with GpuCV
+ * 
+ * \par Available tools and tips to use with GpuCV
+ <ol>
+	 <li>\ref TOOLS_SCT__CUDAPROF</li>
+	 <li>...</li>
+ </ol>	
+ *
+ * \section TOOLS_SCT__CUDAPROF NVIDIA CUDA Visual Profiler
+ NVIDIA CUDA Visual Profiler is supplied with CUDA toolkit, see CUDA homepage for more informations. It shows up usefull informations on processing times and statistics of the CUDA kernels and memory transfers.
+
+
+
+ * \subsection TOOLS_SCT__CUDAPROF_CONSOLEAP Use with GPuCVConsole application
+GPuCVConsole application is used to debug and test all GpuCV operators, so you might want to profile you CUDA operators whitin it. Here are the following steps:
+<ol>
+	<li>Create your CUDA Visual Profiler project</li>
+	<li>Set binary path</li>
+	<li>Choose profiler counters</li>
+	<li>Set arguments, see below</li>
+</ol>
+
+By default the console application does not run any operator, so you need to give it a string or file to define commands to be executed.
+
+\par Using a command file
+Set argumets to:
+\code
+cmdfile MyCudaProfCommandFile.txt
+\endcode
+With MyCudaProfCommandFile.txt set to:
+\code
+enable cuda;
+disable debug;
+disable ipp;
+disable glsl;
+disable showimage;
+loopnbr 5;
+add;
+savebench cuda_prof.xml;
+q;
+\endcode
+
+\par Using a command parameters
+Set argumets to:
+\code
+"enable cuda;disable debug;disable ipp;disable glsl;disable showimage;loopnbr 5;add;savebench cuda_prof.xml;q;"
+\endcode 
+
+\note Under Linux: Be sure to set LD_LIBRARY_PATH correctly.
+*/

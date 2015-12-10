@@ -1,0 +1,158 @@
+/*! \page SETUP_GPUCV_CUDA_PAGE Cuda plugin setup
+ *
+ \author Yannick Allusse
+ \version GpuCV v1.0.0 rev 598
+ 
+ * \section SETUP_GPUCV_CUDA_INTRO_SCT Introduction
+ * GpuCV-CUDA is a plugin for GpuCV that allow easy integration of CUDA library into GpuCV processing pipeline. It is base on NVIDIA GeForce 8 architecture and you must have a compatible card to use it.
+
+ * \bug CUDA offers an emulation mode to execute and test operators on CPU. This mode is not fully working with GpuCV 0.4.2 rev 310. Compatible version will come soon. 
+ 
+ * \section SETUP_GPUCV_CUDA_SETUP_SCT1 Setup
+ The first step is to setup CUDA from NVIDIA on your workstation, visit <a href="http://developer.nvidia.com/object/cuda.html" target='blank'>CUDA homepage</a> to download all corresponding packages:
+ <ul>
+	<li>Required:
+		<ol>
+		<li>Latest NVIDIA drivers supporting CUDA.</li>
+		<li>Cuda toolkit.</li>
+		<li>Cuda SDK.</li>
+		</ol>
+	</li>
+	 <li>Optional (support coming soon):
+		<ol>
+			<li><a href=" http://developer.nvidia.com/object/npp_home.html" target="blank">NPP</a></li>
+			<li><a href="http://www.culatools.com/" target="blank">CULATools</a></li>
+		</ol>
+	</li>
+ </ul>
+ 
+\subsection SETUP_GPUCV_CUDA_SETUP_SCT1_1_WINDOWS Under MS Windows
+Install all binaries (drivers/CUDA toolkit/SDK) and reboot your system.
+ 
+\subsection SETUP_GPUCV_CUDA_SETUP_SCT1_2_LINUX Under LINUX
+Download and install the appropriate Nvidia and CUDA drivers from the Nvidia website.
+
+Now we need to defines some environnement variables for the user that want to use cuda, edit your ".bashrc" file and update the paths if required:
+\code
+#CUDA CUSTOM PATH DEFINITION
+export CUDA_PATH=/usr/local/cuda
+export CUDA_BIN_PATH=/usr/local/cuda/bin
+export CUDA_LIB_PATH=/usr/local/cuda/lib
+export CUDA_INC_PATH=/usr/local/cuda/include
+export NVSDKCOMPUTE_ROOT=/home/$(YOUR USER HOME PATH)/NVIDIA_GPU_Computing_SDK
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_LIB_PATH:$NVSDKCOMPUTE_ROOT/lib
+\endcode
+
+\note Additionnal packages required
+Some additionnal packages might be required such as libxmu6 and libxmu-dev:
+\code
+apt-get install libxmu6 libxmu-dev
+\endcode
+ 
+\section SETUP_GPUCV_CUDA_CHECK_SCT Check that CUDA is working fine
+
+\subsection SETUP_GPUCV_CUDA_SETUP_SCT2_1__CHECK_WINDOWS Under MS Windows
+Open solution ".\%NVSDKCOMPUTE_ROOT%\common\Release.sln" and compile all samples.
+<br>Open solution ".\%NVSDKCOMPUTE_ROOT%\projects\Release.sln" and compile all samples.
+<br><br>Run ".\%NVSDKCOMPUTE_ROOT%\bin\win32\Release\bandwidthTest.exe" and ".\%NVSDKCOMPUTE_ROOT%\bin\win32\Release\fluidsGL.exe" for a 32 bit Windows and  Run ".\NVIDIA CUDA SDK\bin\win64\Release\bandwidthTest.exe" and ".\NVIDIA CUDA SDK\bin\win64\Release\fluidsGL.exe" for a 64 bit Windows.
+
+
+
+\subsection SETUP_GPUCV_CUDA_SETUP_SCT2_2__CHECK_WINDOWS Under LINUX
+Go to NVIDIA SDK folder and compile:
+\code
+cd $NVSDKCOMPUTE_ROOT
+make
+cd bin/linux/release
+#test bandwith speed
+./bandwidthTest
+#test CUDA processing and OpenGL support
+./fluidsGL 
+\endcode
+
+\warning I got '/usr/include/bits/stdio2.h(182): error: identifier "__builtin_va_arg_pack" is undefined' message, see FAQ topic \ref FAQ_COMPILE_CUDA_GRP.
+
+* \section SETUP_GPUCV_CUDA_ENABLING_SCT Enabling CUDA support
+GpuCV support CUDA using an optional library named GpuCV-Cuda that will be enabled automatically when generating the project files (if the CUDA toolkit and SDK are installed). To force activation use '--plug-cuda' or '--plug-cuda-off' option when running premake.:
+\code
+premake4.exe [nothing for auto-detect|--plug-cuda|--plug-cuda--off] {other options...} [your target]
+ex:
+premake4.exe --plug-cuda gmake
+\endcode
+\sa COMPILE_GPUCV_SCT__CUSTOMIZE
+
+\note By calling the 'premake' script, all new .h/.c/.cpp/.cu will be added automatically to their respective projects except for the for Linux MakeFile, see following sections for details.
+
+
+*\section SETUP_GPUCV_CUDA_COMPILE_SCT_CUDA_RULES Cuda compiling rules
+*\subsection SETUP_GPUCV_CUDA_COMPILE_SCT2_SUBSCT_VS_RULES With Visual Studio
+CUDA compiling rules are defined in "./gpucv/etc/vs2008_cuda.rules" and selected by default in the Visual Studio solutions.
+\note Make sure to set the right environnement variables depending on your CUDA versions, 32/64 bits.
+
+
+*\subsection SETUP_GPUCV_CUDA_COMPILE_SCT2_SUBSCT_MAKE_RULES Under LINUX
+CUDA compiling rules are called automatically by the projects makefiles, global rules are defined in the following files:
+<ul>
+<li>"gpucv/etc/cuda_common_include.mk"</li>
+<li>"gpucv/etc/cuda_common_makefile.mk"</li>
+<li>"gpucv/etc/cuda_common_subdirs.mk"</li>
+</ul>
+
+Then each cuda source sub folders have local MakeFiles. They are not automatically updated with the Premake script so you will have to edit them manually to add new .cu files. 
+<br>Each path containing a .cu file must have two make files:
+\par Example of Makefile
+\code
+#compile only cuda files into all the given subdirs
+#list of sub folder to compile
+ALL_SUB_DIRS = 	oper_array
+		#add sub folders here
+
+#update the path to gpucv root folder
+ROOTDIR = ../../../
+export SHARED_LIB_TMP = cxcoregcu
+#include common CUDA makefiles to parse sub dirs
+include $(ROOTDIR)etc/cuda_common_subdirs.mk
+\endcode
+
+\par MakefileCUDA
+\code
+###############################################################################
+# SOURCE VARS
+#list of local .cu files
+CUFILES		=  	cxcoregcu_array.filter.cu\
+			cxcoregcu_array_transform.cu
+
+			
+#list of local CPP files(OPTIONAL)
+CCFILES 	:= 	cxcoregcu.cpp\
+			cvgcudalocalsum.cpp
+
+#target library name
+SHARED_LIB_TEMP = cxcoregcu
+NO_LINKING=2
+SRCDIR = ./
+ROOTDIR = ../../../
+#include common CUDA makefiles
+include $(ROOTDIR)etc/cuda_common_include.mk
+include $(ROOTDIR)etc/cuda_common_makefile.mk
+##############################################################################
+\endcode
+
+
+* \section  SETUP_GPUCV_CUDA_USE_SCT Use GpuCV-CUDA plug-in in your project
+\par Using the switch
+When using the switch mechanism, you do not need to initialize CUDA plugins or include any files in your application.
+
+\par Using the plugins manually
+In order to manuallt use GpuCVCuda plugin in your application you need to perform the following steps:
+ <ul>
+	 <li>include header: <b>"<GpuCVCuda/include.h>"</b></li>
+	 <li>include main GpuCVCuda lib: <b>GpuCVCuda[32|64][D].lib</b></li>
+	 <li>include operators headers and libs: <b>cvgcu[32|64][D].lib</b>, <b>cxcoregcu[32|64][D].lib</b>,...</li>
+	 <li>Replace <b>cvgInit() by cvgcuInit()</b></li>
+	 <li>Call GpuCVCuda operators using <b>cvgCuda*</b> convention.</li>
+ </ul>
+\note Please refer to tutorial \ref TUTO_INTEGRATION_PRJ "Using GpuCV into your project" for more details.
+*/
+
+

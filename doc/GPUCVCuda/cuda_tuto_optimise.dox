@@ -1,0 +1,29 @@
+/*! \page TUTO_OPTIMIZE_OP_CUDA Creating a GpuCV operator - using NVIDIA CUDA -
+ * \section TUTO_OPTIMIZE_OP_CUDA __SCT_INTRO Intro
+ * \par "PRE-REQUIS"
+ <ul>
+	<li>\ref SETUP_GPUCV_CUDA_PAGE</li>
+	<li>\ref TUTO_CREATE_OP_BASE "Creating a GpuCV operator - base concept -"</li>
+	<li>\ref TUTO_CREATE_OP_CUDA "Creating an operator - using NVIDIA CUDA -"</li>
+	<li>\ref TUTO_CREATE_OP_CUDA_ARITHMLOGIC "Creating an arithmetic/logic operator - using NVIDIA CUDA -"</li>
+	<li>\ref TUTO_PROFILE_OP_CUDA  "Benchmarking an operator with Cuda Visual profiler "</li>
+	<li>Base knowledge of NVIDIA CUDA library</li>
+	<li><a href="http://www.gpgpu.org/sc2007/SC07_CUDA_5_Optimization_Harris.pdf">CUDA Supercomputing 07 tutorial: Optimizing</a></li>
+ </ul>
+ \sa 
+ \author Yannick Allusse
+ \version GpuCV v0.4.2 rev 325
+ \note Turorial tag: <b>TUTO_OPTIMIZE_OP_CUDA _TAG</b>
+ 
+ 
+<br>In this tutorial, we will describe several technics to optimize GpuCV-CUDA operators.
+<br><br>Follow the key tag <b>TUTO_OPTIMIZE_OP_CUDA </b> in full project source code to have the correspondance of each steps: 
+<ol>
+	 <li>\ref TUTO_OPTIMIZE_OP_CUDA__STP1__CHANNEL_MULTIPLEX</li>
+	 <li>\ref TUTO_OPTIMIZE_OP_CUDA__STP2__CHANNEL_RESHAPE</li>
+</ol>
+ 
+* \section TUTO_OPTIMIZE_OP_CUDA__STP1__CHANNEL_MULTIPLEX Multiplexing channels
+
+* \section TUTO_OPTIMIZE_OP_CUDA__STP2__CHANNEL_RESHAPE Reshaping channels
+*/

@@ -1,0 +1,37 @@
+/*! \mainpage GpuCV documentation home page
+ *
+ * \section INTRO_SECT Introduction
+ * \par
+ * Welcome to GpuCV project documentation.
+ <br>
+ <br>Project home page: https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHome
+ <br>
+ <br>This documentation is also available online at https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/GpuCVDoc
+ <br>
+ * \par
+ * \section INTRO_SUMMARY Sections
+ <ol>
+	<li>\ref SETUP_PAGE "Setting up your system for GpuCV"</li>	
+	<li>Compiling
+		<ol>
+		<li>\ref COMPILE_PAGE "Compiling GpuCV"</li>
+		<li>\ref SETUP_GPUCV_CUDA_PAGE "Compiling GpuCV-CUDA plug-in"</li>
+		</ol>
+	</li>
+	<li>\ref EXAMPLE_LIST_PAGE "Running sample applications"</li>	 
+	<li>\ref FEATURES_LIST_PAGE "Features list"</li>
+	<li>\ref TUTO_LIST_PAGE "Tutorials"</li>
+	<li>\ref TOOLS_PAGE "External tools to use with GpuCV"</li>
+	<li>\ref CVTIPS_PAGE "OpenCV programming tips and restrictions"</li>
+	<li>\ref FILE_TREE_PAGE "GpuCV files tree and description"</li>
+	<li>\ref FAQ_GRP "FAQ"</li>
+ </ol>
+*/
+
+/* \section INTRO_OTHER_PAGES Other pages
+ <ol>
+	 <li>\ref todo "Todo list"</li>
+	 <li>\ref bug "Referenced bugs "</li>
+	 <li>\ref deprecated "Deprecated objects and functions"</li>
+ </ol>
+ */
